@@ -3,7 +3,7 @@ Numeric keypad implemented for Pro Micro using Arduino IDE
 
 [Original repo by theimmc](https://github.com/theimmc/numeric-keypad)
 
-Developed for [this layout](https://gist.github.com/E66666666/6e0ff19db4f3ac36ccb57e5ba46f8258)
+Developed for [this layout](http://www.keyboard-layout-editor.com/#/gists/6e0ff19db4f3ac36ccb57e5ba46f8258)
 
 ![thing](http://kle-render.herokuapp.com/api/6e0ff19db4f3ac36ccb57e5ba46f8258)
 
