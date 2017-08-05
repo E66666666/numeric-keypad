@@ -1,3 +1,6 @@
+#include <HID-Project.h>
+#include <HID-Settings.h>
+
 // These are the column pins, to be configured for input with
 // internal pullup
 
