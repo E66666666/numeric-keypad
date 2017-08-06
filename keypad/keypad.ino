@@ -67,6 +67,22 @@ KeyInfo NM9(KeyType::KeyCode, 0xE9, -1);
 KeyInfo NMD(KeyType::KeyCode, 0xEB, -1);
 KeyInfo NMR(KeyType::KeyCode, 0xE0, -1);
 
+KeyInfo __W('w');
+KeyInfo __A('a');
+KeyInfo __S('s');
+KeyInfo __D('d');
+KeyInfo __Q('q');
+KeyInfo __E('e');
+KeyInfo __F('f');
+KeyInfo __R('r');
+KeyInfo __1('1');
+KeyInfo __2('2');
+KeyInfo __3('3');
+KeyInfo __4(KeyType::Dual, '4', 3);
+KeyInfo TAB(0xB3);
+KeyInfo SPC(0x20);
+
+
 KeyInfo XXX;
 
 /*
@@ -97,21 +113,37 @@ KeyInfo* keycode_preset0[ROWS][COLUMNS] = {
 // NUM   P0   P1   P2
 // INS  HOM  PGU   x
 // DEL  END  PGD   P3
-//  x    U    x    x
+// TAB   U    x    x
 //  L    D    R  ENTER
 
 KeyInfo* keycode_preset1[ROWS][COLUMNS] = {
 	{ &NUM, &PR0, &PR1, &PR2 },
 	{ &INS, &HOM, &PGU, &XXX },
 	{ &DEL, &END, &PGD, &PR3 },
-	{ &XXX, &_U_, &XXX, &XXX },
+	{ &TAB, &_U_, &XXX, &XXX },
 	{ &_L_, &_D_, &_R_, &RET }
 };
 
-// Layout 2: TBD
+// Layout 2: WASD
+// NUM   P0   P1   P2
+//  1    2    3    x
+// TAB  SPC   R    4
+//  Q    W    E    x
+//  A    S    D    F
+
+KeyInfo* keycode_preset2[ROWS][COLUMNS] = {
+	{ &NUM, &PR0, &PR1, &PR2 },
+	{ &__1, &__2, &__3, &XXX },
+	{ &TAB, &SPC, &__R, &__4 },
+	{ &__Q, &__W, &__E, &XXX },
+	{ &__A, &__S, &__D, &RET }
+};
 
 // Layout 3: TBD
 
+KeyInfo* keycode_preset3[ROWS][COLUMNS] = {
+	{ &NUM, &PR0, &PR1, &PR2 },
+};
 
 void setup() {
 	memcpy(keycode, keycode_preset0, sizeof(keycode_preset0));
@@ -205,6 +237,9 @@ void loop() {
 			break;
 		case 1:
 			memcpy(keycode, keycode_preset1, sizeof(keycode_preset1));
+			break;
+		case 2:
+			memcpy(keycode, keycode_preset2, sizeof(keycode_preset2));
 			break;
 		default:
 			break;

@@ -9,12 +9,16 @@ enum class KeyType {
 
 class KeyInfo {
 public:
-	KeyInfo(): 
-		m_type(KeyType::None), 
+	KeyInfo() :
+		m_type(KeyType::None),
 		m_keyCode(0),
-		m_switchId(-1) {
-		
-	}
+		m_switchId(-1) { }
+
+	KeyInfo(int keyCode) :
+		m_type(KeyType::Switch),
+		m_keyCode(keyCode),
+		m_switchId(-1) { }
+
 	KeyInfo(KeyType type, int keyCode, int switchId):
 		m_type(type),
 		m_keyCode(keyCode),
