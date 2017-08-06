@@ -35,10 +35,10 @@ KeyInfo MUL(KeyType::Dual, 0xDD, 1);
 KeyInfo MIN(KeyType::Dual, 0xDE, 2);
 KeyInfo PLS(KeyType::Dual, 0xDF, 3);
 
-KeyInfo PR0(KeyType::Switch, 0, 0);
-KeyInfo PR1(KeyType::Switch, 0, 1);
-KeyInfo PR2(KeyType::Switch, 0, 2);
-KeyInfo PR3(KeyType::Switch, 0, 3);
+KeyInfo LY0(KeyType::Layer, 0, 0);
+KeyInfo LY1(KeyType::Layer, 0, 1);
+KeyInfo LY2(KeyType::Layer, 0, 2);
+KeyInfo LY3(KeyType::Layer, 0, 3);
 
 KeyInfo INS(KeyType::KeyCode, 0xD1, -1);
 KeyInfo DEL(KeyType::KeyCode, 0xD4, -1);
@@ -101,7 +101,7 @@ KeyInfo XXX;
 //  0   0   . ENTER
 
 
-KeyInfo* keycode_preset0[ROWS][COLUMNS] = {
+KeyInfo* keycode_layer0[ROWS][COLUMNS] = {
 	{ &NUM, &DIV, &MUL, &MIN },
 	{ &NM7, &NM8, &NM9, &XXX },
 	{ &NM4, &NM5, &NM6, &PLS },
@@ -116,10 +116,10 @@ KeyInfo* keycode_preset0[ROWS][COLUMNS] = {
 // TAB   U    x    x
 //  L    D    R  ENTER
 
-KeyInfo* keycode_preset1[ROWS][COLUMNS] = {
-	{ &NUM, &PR0, &PR1, &PR2 },
+KeyInfo* keycode_layer1[ROWS][COLUMNS] = {
+	{ &NUM, &LY0, &LY1, &LY2 },
 	{ &INS, &HOM, &PGU, &XXX },
-	{ &DEL, &END, &PGD, &PR3 },
+	{ &DEL, &END, &PGD, &LY3 },
 	{ &TAB, &_U_, &XXX, &XXX },
 	{ &_L_, &_D_, &_R_, &RET }
 };
@@ -131,8 +131,8 @@ KeyInfo* keycode_preset1[ROWS][COLUMNS] = {
 //  Q    W    E    x
 //  A    S    D    F
 
-KeyInfo* keycode_preset2[ROWS][COLUMNS] = {
-	{ &NUM, &PR0, &PR1, &PR2 },
+KeyInfo* keycode_layer2[ROWS][COLUMNS] = {
+	{ &NUM, &LY0, &LY1, &LY2 },
 	{ &__1, &__2, &__3, &XXX },
 	{ &TAB, &SPC, &__R, &__4 },
 	{ &__Q, &__W, &__E, &XXX },
@@ -141,16 +141,16 @@ KeyInfo* keycode_preset2[ROWS][COLUMNS] = {
 
 // Layout 3: TBD
 
-KeyInfo* keycode_preset3[ROWS][COLUMNS] = {
-	{ &NUM, &PR0, &PR1, &PR2 },
+KeyInfo* keycode_layer3[ROWS][COLUMNS] = {
+	{ &NUM, &LY0, &LY1, &LY2 },
 	{ &XXX, &XXX, &XXX, &XXX },
-	{ &XXX, &XXX, &XXX, &PR3 },
+	{ &XXX, &XXX, &XXX, &LY3 },
 	{ &XXX, &XXX, &XXX, &XXX },
 	{ &XXX, &XXX, &XXX, &RET }
 };
 
 void setup() {
-	memcpy(keycode, keycode_preset0, sizeof(keycode_preset0));
+	memcpy(keycode, keycode_layer0, sizeof(keycode_layer0));
 	for (uint8_t cnt = 0; cnt < ROWS; cnt++) {
 		pinMode(strobe_pins[cnt], OUTPUT);
 		digitalWrite(strobe_pins[cnt], HIGH);
@@ -202,7 +202,7 @@ void loop() {
 			// key up
 			if (key_state[strobe_row][cnt] != 0) {
 				if (num_down && keyInfo.GetType() == KeyType::Dual ||
-					num_down && keyInfo.GetType() == KeyType::Switch) {
+					num_down && keyInfo.GetType() == KeyType::Layer) {
 					break;
 				}
 
@@ -219,7 +219,7 @@ void loop() {
 			// key down
 			if (key_state[strobe_row][cnt] == 0) {
 				if (num_down && keyInfo.GetType() == KeyType::Dual ||
-					num_down && keyInfo.GetType() == KeyType::Switch) {
+					num_down && keyInfo.GetType() == KeyType::Layer) {
 					nextMap = keyInfo.GetSwitch();
 					break;
 				}
@@ -237,13 +237,13 @@ void loop() {
 
 	switch(nextMap) {
 		case 0:
-			memcpy(keycode, keycode_preset0, sizeof(keycode_preset0));
+			memcpy(keycode, keycode_layer0, sizeof(keycode_layer0));
 			break;
 		case 1:
-			memcpy(keycode, keycode_preset1, sizeof(keycode_preset1));
+			memcpy(keycode, keycode_layer1, sizeof(keycode_layer1));
 			break;
 		case 2:
-			memcpy(keycode, keycode_preset2, sizeof(keycode_preset2));
+			memcpy(keycode, keycode_layer2, sizeof(keycode_layer2));
 			break;
 		default:
 			break;

@@ -2,7 +2,7 @@
 
 enum class KeyType {
 	KeyCode,
-	Switch,
+	Layer,
 	Dual,
 	None,
 };
@@ -15,7 +15,7 @@ public:
 		m_switchId(-1) { }
 
 	KeyInfo(int keyCode) :
-		m_type(KeyType::Switch),
+		m_type(KeyType::Layer),
 		m_keyCode(keyCode),
 		m_switchId(-1) { }
 
