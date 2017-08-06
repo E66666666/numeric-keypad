@@ -149,24 +149,19 @@ bool debounce(unsigned long t_now, unsigned long t_prev) {
 
 void loop() {
 	unsigned long tick_now = millis();
+	int nextMap = -1;
 
 	// since we use non zero to indicate pressed state, we need
 	// to handle the edge case where millis() returns 0
 
 	if (tick_now == 0) tick_now = 1;
 
-	// every time we enter this loop, we're reading only the switches
+	// every time we enter this loop, we're reading only the switches 
 	// on strobe_row
-
 	if (strobe_row >= ROWS) strobe_row = 0;
-
 	digitalWrite(strobe_pins[strobe_row], LOW);
-	delay(2); // give it some time to stabilize just in case
 
 	// We check all the switches in the row
-
-	int nextMap = -1;
-
 	for (int cnt = 0; cnt < COLUMNS; cnt++) {
 		// ignore state change for pin if in debounce period
 		if (key_state[strobe_row][cnt] != 0) {
@@ -232,5 +227,4 @@ void loop() {
 
 	digitalWrite(strobe_pins[strobe_row], HIGH);
 	strobe_row++;
-	delay(5);
 }
