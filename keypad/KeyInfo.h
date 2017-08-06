@@ -24,17 +24,17 @@ public:
 		return m_type;
 	}
 
-	int GetKeyCode() {
+	uint8_t GetKeyCode() const {
 		return m_keyCode;
 	}
 
-	int GetSwitch() {
+	int8_t GetSwitch() const {
 		return m_switchId;
 	}
 
 private:
 	KeyType m_type;
-	int m_keyCode;
-	int m_switchId;
+	uint8_t m_keyCode;
+	int8_t m_switchId;
 
 };

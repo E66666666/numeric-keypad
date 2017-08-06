@@ -1,12 +1,11 @@
 #include <Keyboard.h>
 #include "KeyInfo.h"
 
-const int COLUMNS = 4;
-const int ROWS = 5;
-const int HB_LED = 17;
-const int NL_LED = 17;
+const uint8_t COLUMNS = 4;
+const uint8_t ROWS = 5;
 
-const int NL_KEYCODE = 0xDB;
+const uint8_t NL_KEYCODE = 0xDB;
+const uint8_t DEBOUNCE_MS = 20;
 
 bool num_down = false;
 bool num_down_prev = num_down;
@@ -14,15 +13,15 @@ bool num_down_prev = num_down;
 // These are the column pins. They're configured for input with
 // internal pullup
 
-int input_pins[COLUMNS] = {10, 16, 14, 15};
+uint8_t input_pins[COLUMNS] = {10, 16, 14, 15};
 
 // These are the row strobes. They're configured for output
 // and initially all set to high. Individual pins are set to
 // low to read that row. Only one row is low at any time.
 
-int strobe_pins[ROWS] = {9, 8, 7, 6, 5};
+uint8_t strobe_pins[ROWS] = {9, 8, 7, 6, 5};
 unsigned long key_state[ROWS][COLUMNS];
-KeyInfo keycode[ROWS][COLUMNS];
+KeyInfo *keycode[ROWS][COLUMNS];
 
 
 /*
@@ -85,12 +84,12 @@ KeyInfo XXX;
 //  0   0   . ENTER
 
 
-KeyInfo keycode_preset0[ROWS][COLUMNS] = {
-	{ NUM, DIV, MUL, MIN },
-	{ NM7, NM8, NM9, XXX },
-	{ NM4, NM5, NM6, PLS },
-	{ NM1, NM2, NM3, XXX },
-	{ NM0, NM0, NMD, NMR }
+KeyInfo* keycode_preset0[ROWS][COLUMNS] = {
+	{ &NUM, &DIV, &MUL, &MIN },
+	{ &NM7, &NM8, &NM9, &XXX },
+	{ &NM4, &NM5, &NM6, &PLS },
+	{ &NM1, &NM2, &NM3, &XXX },
+	{ &NM0, &NM0, &NMD, &NMR }
 };
 
 // Layout 1: Navigation cluster
@@ -100,33 +99,30 @@ KeyInfo keycode_preset0[ROWS][COLUMNS] = {
 //  x    U    x    x
 //  L    D    R  ENTER
 
-KeyInfo keycode_preset1[ROWS][COLUMNS] = {
-	{ NUM, PR0, PR1, PR2 },
-	{ INS, HOM, PGU, XXX },
-	{ DEL, END, PGD, PR3 },
-	{ XXX, _U_, XXX, XXX },
-	{ _L_, _D_, _R_, RET }
+KeyInfo* keycode_preset1[ROWS][COLUMNS] = {
+	{ &NUM, &PR0, &PR1, &PR2 },
+	{ &INS, &HOM, &PGU, &XXX },
+	{ &DEL, &END, &PGD, &PR3 },
+	{ &XXX, &_U_, &XXX, &XXX },
+	{ &_L_, &_D_, &_R_, &RET }
 };
 
 // Layout 2: TBD
 
 // Layout 3: TBD
 
-int strobe_row = 0;
-int q = 0;
+uint8_t strobe_row = 0;
 
 void setup() {
 	int cnt;
-	int cnt2;
-
-	pinMode(NL_LED, OUTPUT);
 
 	memcpy(keycode, keycode_preset0, sizeof(keycode_preset0));
 	for (cnt = 0; cnt < ROWS; cnt++) {
 		pinMode(strobe_pins[cnt], OUTPUT);
 		digitalWrite(strobe_pins[cnt], HIGH);
 
-		for (cnt2 = 0; cnt2 < COLUMNS; cnt2++) key_state[cnt][cnt2] = 0;
+		for (int cnt2 = 0; cnt2 < COLUMNS; cnt2++)
+			key_state[cnt][cnt2] = 0;
 	}
 
 	for (cnt = 0; cnt < COLUMNS; cnt++) {
@@ -136,14 +132,10 @@ void setup() {
 	Keyboard.begin();
 }
 
-const int DEBOUNCE_MS = 20;
 
 bool debounce(unsigned long t_now, unsigned long t_prev) {
-	unsigned long diff;
-
-	diff = t_now - t_prev; // need to check for underflow?
-
-	if (diff <= DEBOUNCE_MS) return true;
+	// need to check for underflow?
+	if ((t_now - t_prev) <= DEBOUNCE_MS) return true;
 	else return false;
 }
 
@@ -170,7 +162,7 @@ void loop() {
 			}
 		}
 
-		auto keyInfo = keycode[strobe_row][cnt];
+		auto keyInfo = *keycode[strobe_row][cnt];
 
 		if (digitalRead(input_pins[cnt]) == HIGH) {
 			if (key_state[strobe_row][cnt] != 0) {
