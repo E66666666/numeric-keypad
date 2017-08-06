@@ -24,6 +24,7 @@ KeyInfo *keycode[ROWS][COLUMNS];
 uint8_t strobe_row = 0;
 bool num_down = false;
 bool num_down_prev = num_down;
+bool switchedLayer = false;
 
 /*
  * Define all keys we're gonna be using
@@ -221,6 +222,7 @@ void loop() {
 				if (num_down && keyInfo.GetType() == KeyType::Dual ||
 					num_down && keyInfo.GetType() == KeyType::Layer) {
 					nextMap = keyInfo.GetSwitch();
+					switchedLayer = true;
 					break;
 				}
 
@@ -251,8 +253,13 @@ void loop() {
 	
 
 	if (num_down != num_down_prev && !num_down) {
-		Keyboard.press(NL_KEYCODE);
-		Keyboard.release(NL_KEYCODE);
+		if (switchedLayer) {
+			switchedLayer = false;
+		}
+		else {
+			Keyboard.press(NL_KEYCODE);
+			Keyboard.release(NL_KEYCODE);
+		}
 	}
 	num_down_prev = num_down;
 
