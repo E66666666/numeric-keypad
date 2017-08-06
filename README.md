@@ -9,7 +9,7 @@ Developed for [this layout](http://www.keyboard-layout-editor.com/#/gists/6e0ff1
 
 New features and planned features:
 
-* (WIP) Multiple layers by holding num lock + div/mult/min/plus
+* Multiple layers by holding num lock + div/mult/min/plus
 * (N/A) Macro layer
 * (N/A) Something to notify the user which layer/num lock we're on
 
@@ -21,5 +21,6 @@ Current usage:
 * Num lock state switches on num lock key _release_
 * NumLock + DIV/MUL/MIN/PLS switches modes
   * DIV: Normal numpad
-  * MUL: Arrow keys
-  
+  * MUL: Navigation keys
+  * MIN: WASD keys ("Game")
+  * PLS: TBD (Macros?)
