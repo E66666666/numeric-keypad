@@ -41,32 +41,32 @@ KeyInfo LY1(KeyType::Layer, 0, 1);
 KeyInfo LY2(KeyType::Layer, 0, 2);
 KeyInfo LY3(KeyType::Layer, 0, 3);
 
-KeyInfo INS(KeyType::KeyCode, 0xD1, -1);
-KeyInfo DEL(KeyType::KeyCode, 0xD4, -1);
-KeyInfo HOM(KeyType::KeyCode, 0xD2, -1);
-KeyInfo END(KeyType::KeyCode, 0xD5, -1);
-KeyInfo PGU(KeyType::KeyCode, 0xD3, -1);
-KeyInfo PGD(KeyType::KeyCode, 0xD6, -1);
+KeyInfo INS(0xD1);
+KeyInfo DEL(0xD4);
+KeyInfo HOM(0xD2);
+KeyInfo END(0xD5);
+KeyInfo PGU(0xD3);
+KeyInfo PGD(0xD6);
 
-KeyInfo RET(KeyType::KeyCode, 0xB0, -1);
+KeyInfo RET(0xB0);
 
-KeyInfo _U_(KeyType::KeyCode, 0xDA, -1);
-KeyInfo _D_(KeyType::KeyCode, 0xD9, -1);
-KeyInfo _L_(KeyType::KeyCode, 0xD8, -1);
-KeyInfo _R_(KeyType::KeyCode, 0xD7, -1);
+KeyInfo _U_(0xDA);
+KeyInfo _D_(0xD9);
+KeyInfo _L_(0xD8);
+KeyInfo _R_(0xD7);
 
-KeyInfo NM0(KeyType::KeyCode, 0xEA, -1);
-KeyInfo NM1(KeyType::KeyCode, 0xE1, -1);
-KeyInfo NM2(KeyType::KeyCode, 0xE2, -1);
-KeyInfo NM3(KeyType::KeyCode, 0xE3, -1);
-KeyInfo NM4(KeyType::KeyCode, 0xE4, -1);
-KeyInfo NM5(KeyType::KeyCode, 0xE5, -1);
-KeyInfo NM6(KeyType::KeyCode, 0xE6, -1);
-KeyInfo NM7(KeyType::KeyCode, 0xE7, -1);
-KeyInfo NM8(KeyType::KeyCode, 0xE8, -1);
-KeyInfo NM9(KeyType::KeyCode, 0xE9, -1);
-KeyInfo NMD(KeyType::KeyCode, 0xEB, -1);
-KeyInfo NMR(KeyType::KeyCode, 0xE0, -1);
+KeyInfo NM0(0xEA);
+KeyInfo NM1(0xE1);
+KeyInfo NM2(0xE2);
+KeyInfo NM3(0xE3);
+KeyInfo NM4(0xE4);
+KeyInfo NM5(0xE5);
+KeyInfo NM6(0xE6);
+KeyInfo NM7(0xE7);
+KeyInfo NM8(0xE8);
+KeyInfo NM9(0xE9);
+KeyInfo NMD(0xEB);
+KeyInfo NMR(0xE0);
 
 KeyInfo __W('w');
 KeyInfo __A('a');
@@ -83,18 +83,17 @@ KeyInfo __4(KeyType::Dual, '4', 3);
 KeyInfo TAB(0xB3);
 KeyInfo SPC(0x20);
 
-
-KeyInfo XXX;
+KeyInfo ___;
 
 /*
  * Switching keys: Hold NumLock, press 
- *  / Layout 0
- *  * Layout 1
- *  - Layout 2
- *  + Layout 3
+ *  / for layer 0
+ *  * for layer 1
+ *  - for layer 2
+ *  + for layer 3
  */
 
-// Layout 0: Numeric pad
+// Layer 0: Numeric pad
 // NUM  /   *   -
 //  7   8   9   x
 //  4   5   6   +
@@ -104,13 +103,13 @@ KeyInfo XXX;
 
 KeyInfo* keycode_layer0[ROWS][COLUMNS] = {
 	{ &NUM, &DIV, &MUL, &MIN },
-	{ &NM7, &NM8, &NM9, &XXX },
+	{ &NM7, &NM8, &NM9, &___ },
 	{ &NM4, &NM5, &NM6, &PLS },
-	{ &NM1, &NM2, &NM3, &XXX },
+	{ &NM1, &NM2, &NM3, &___ },
 	{ &NM0, &NM0, &NMD, &NMR }
 };
 
-// Layout 1: Navigation cluster
+// Layer 1: Navigation cluster
 // NUM   P0   P1   P2
 // INS  HOM  PGU   x
 // DEL  END  PGD   P3
@@ -119,13 +118,13 @@ KeyInfo* keycode_layer0[ROWS][COLUMNS] = {
 
 KeyInfo* keycode_layer1[ROWS][COLUMNS] = {
 	{ &NUM, &LY0, &LY1, &LY2 },
-	{ &INS, &HOM, &PGU, &XXX },
+	{ &INS, &HOM, &PGU, &___ },
 	{ &DEL, &END, &PGD, &LY3 },
-	{ &TAB, &_U_, &XXX, &XXX },
+	{ &TAB, &_U_, &___, &___ },
 	{ &_L_, &_D_, &_R_, &RET }
 };
 
-// Layout 2: WASD
+// Layer 2: WASD
 // NUM   P0   P1   P2
 //  1    2    3    x
 // TAB  SPC   R    4
@@ -134,20 +133,20 @@ KeyInfo* keycode_layer1[ROWS][COLUMNS] = {
 
 KeyInfo* keycode_layer2[ROWS][COLUMNS] = {
 	{ &NUM, &LY0, &LY1, &LY2 },
-	{ &__1, &__2, &__3, &XXX },
+	{ &__1, &__2, &__3, &___ },
 	{ &TAB, &SPC, &__R, &__4 },
-	{ &__Q, &__W, &__E, &XXX },
+	{ &__Q, &__W, &__E, &___ },
 	{ &__A, &__S, &__D, &RET }
 };
 
-// Layout 3: TBD
+// Layer 3: TBD
 
 KeyInfo* keycode_layer3[ROWS][COLUMNS] = {
 	{ &NUM, &LY0, &LY1, &LY2 },
-	{ &XXX, &XXX, &XXX, &XXX },
-	{ &XXX, &XXX, &XXX, &LY3 },
-	{ &XXX, &XXX, &XXX, &XXX },
-	{ &XXX, &XXX, &XXX, &RET }
+	{ &___, &___, &___, &___ },
+	{ &___, &___, &___, &LY3 },
+	{ &___, &___, &___, &___ },
+	{ &___, &___, &___, &RET }
 };
 
 void setup() {

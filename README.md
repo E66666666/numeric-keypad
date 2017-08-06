@@ -13,8 +13,6 @@ New features and planned features:
 * (N/A) Macro layer
 * (N/A) Something to notify the user which layer/num lock we're on
 
-Currently just messing around with defining a convenient keymap...
-
 Current usage:
 
 * Starts with normal numpad layout
