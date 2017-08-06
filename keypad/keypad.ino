@@ -143,6 +143,10 @@ KeyInfo* keycode_preset2[ROWS][COLUMNS] = {
 
 KeyInfo* keycode_preset3[ROWS][COLUMNS] = {
 	{ &NUM, &PR0, &PR1, &PR2 },
+	{ &XXX, &XXX, &XXX, &XXX },
+	{ &XXX, &XXX, &XXX, &PR3 },
+	{ &XXX, &XXX, &XXX, &XXX },
+	{ &XXX, &XXX, &XXX, &RET }
 };
 
 void setup() {
