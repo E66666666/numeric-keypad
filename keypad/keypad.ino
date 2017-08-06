@@ -1,4 +1,5 @@
 #include <Keyboard.h>
+
 #include "KeyInfo.h"
 
 const uint8_t COLUMNS = 4;
@@ -35,6 +36,10 @@ KeyInfo DIV(KeyType::Dual, 0xDC, 0);
 KeyInfo MUL(KeyType::Dual, 0xDD, 1);
 KeyInfo MIN(KeyType::Dual, 0xDE, 2);
 KeyInfo PLS(KeyType::Dual, 0xDF, 3);
+
+KeyInfo PRT(KeyType::Dual, 0xCE, 0);
+KeyInfo WIN(KeyType::Dual, 0x87, 1);
+KeyInfo MEN(KeyType::Dual, 0xED, 2);
 
 KeyInfo LY0(KeyType::Layer, 0, 0);
 KeyInfo LY1(KeyType::Layer, 0, 1);
@@ -110,17 +115,17 @@ KeyInfo* keycode_layer0[ROWS][COLUMNS] = {
 };
 
 // Layer 1: Navigation cluster
-// NUM   P0   P1   P2
+// NUM  PRT  WIN  MEN
 // INS  HOM  PGU   x
 // DEL  END  PGD   P3
-// TAB   U    x    x
+//  x    U    x    x
 //  L    D    R  ENTER
 
 KeyInfo* keycode_layer1[ROWS][COLUMNS] = {
-	{ &NUM, &LY0, &LY1, &LY2 },
+	{ &NUM, &PRT, &WIN, &MEN },
 	{ &INS, &HOM, &PGU, &___ },
 	{ &DEL, &END, &PGD, &LY3 },
-	{ &TAB, &_U_, &___, &___ },
+	{ &___, &_U_, &___, &___ },
 	{ &_L_, &_D_, &_R_, &RET }
 };
 
