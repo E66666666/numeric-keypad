@@ -7,22 +7,23 @@ const uint8_t ROWS = 5;
 const uint8_t NL_KEYCODE = 0xDB;
 const uint8_t DEBOUNCE_MS = 20;
 
-bool num_down = false;
-bool num_down_prev = num_down;
-
 // These are the column pins. They're configured for input with
 // internal pullup
 
-uint8_t input_pins[COLUMNS] = {10, 16, 14, 15};
+const uint8_t input_pins[COLUMNS] = {10, 16, 14, 15};
 
 // These are the row strobes. They're configured for output
 // and initially all set to high. Individual pins are set to
 // low to read that row. Only one row is low at any time.
 
-uint8_t strobe_pins[ROWS] = {9, 8, 7, 6, 5};
+const uint8_t strobe_pins[ROWS] = {9, 8, 7, 6, 5};
+
 unsigned long key_state[ROWS][COLUMNS];
 KeyInfo *keycode[ROWS][COLUMNS];
 
+uint8_t strobe_row = 0;
+bool num_down = false;
+bool num_down_prev = num_down;
 
 /*
  * Define all keys we're gonna be using
@@ -111,21 +112,18 @@ KeyInfo* keycode_preset1[ROWS][COLUMNS] = {
 
 // Layout 3: TBD
 
-uint8_t strobe_row = 0;
 
 void setup() {
-	int cnt;
-
 	memcpy(keycode, keycode_preset0, sizeof(keycode_preset0));
-	for (cnt = 0; cnt < ROWS; cnt++) {
+	for (uint8_t cnt = 0; cnt < ROWS; cnt++) {
 		pinMode(strobe_pins[cnt], OUTPUT);
 		digitalWrite(strobe_pins[cnt], HIGH);
 
-		for (int cnt2 = 0; cnt2 < COLUMNS; cnt2++)
+		for (uint8_t cnt2 = 0; cnt2 < COLUMNS; cnt2++)
 			key_state[cnt][cnt2] = 0;
 	}
 
-	for (cnt = 0; cnt < COLUMNS; cnt++) {
+	for (uint8_t cnt = 0; cnt < COLUMNS; cnt++) {
 		pinMode(input_pins[cnt], INPUT_PULLUP);
 	}
 
@@ -135,13 +133,14 @@ void setup() {
 
 bool debounce(unsigned long t_now, unsigned long t_prev) {
 	// need to check for underflow?
-	if ((t_now - t_prev) <= DEBOUNCE_MS) return true;
-	else return false;
+	if ((t_now - t_prev) <= DEBOUNCE_MS) 
+		return true;
+	return false;
 }
 
 void loop() {
 	unsigned long tick_now = millis();
-	int nextMap = -1;
+	int8_t nextMap = -1;
 
 	// since we use non zero to indicate pressed state, we need
 	// to handle the edge case where millis() returns 0
@@ -154,7 +153,7 @@ void loop() {
 	digitalWrite(strobe_pins[strobe_row], LOW);
 
 	// We check all the switches in the row
-	for (int cnt = 0; cnt < COLUMNS; cnt++) {
+	for (uint8_t cnt = 0; cnt < COLUMNS; cnt++) {
 		// ignore state change for pin if in debounce period
 		if (key_state[strobe_row][cnt] != 0) {
 			if (debounce(tick_now, key_state[strobe_row][cnt]) == true) {
@@ -163,11 +162,11 @@ void loop() {
 		}
 
 		auto keyInfo = *keycode[strobe_row][cnt];
-
-		if (digitalRead(input_pins[cnt]) == HIGH) {
+		if (digitalRead(input_pins[cnt]) == HIGH) { 
+			// key up
 			if (key_state[strobe_row][cnt] != 0) {
 				if (num_down && keyInfo.GetType() == KeyType::Dual ||
-					num_down && keyInfo.GetType() == KeyType::Switch ) {
+					num_down && keyInfo.GetType() == KeyType::Switch) {
 					break;
 				}
 
@@ -181,6 +180,7 @@ void loop() {
 			}
 		}
 		else {
+			// key down
 			if (key_state[strobe_row][cnt] == 0) {
 				if (num_down && keyInfo.GetType() == KeyType::Dual ||
 					num_down && keyInfo.GetType() == KeyType::Switch) {

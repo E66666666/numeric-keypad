@@ -20,7 +20,7 @@ public:
 		m_keyCode(keyCode),
 		m_switchId(switchId) { }
 
-	KeyType GetType() {
+	KeyType GetType() const {
 		return m_type;
 	}
 
