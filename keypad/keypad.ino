@@ -24,27 +24,10 @@ int strobe_pins[ROWS] = {9, 8, 7, 6, 5};
 unsigned long key_state[ROWS][COLUMNS];
 KeyInfo keycode[ROWS][COLUMNS];
 
-/*
- * NumLock + 
- *  / Preset 0
- *  * Preset 1
- *  - Preset 2
- *  + Preset 3
- */
 
 /*
- * Preset 0: Default numpad
- * Preset 1: Arrows + functions
- * Preset 2: WASD + numbers etc
- * Preset 3: osu? macros? Ehhh.
+ * Define all keys we're gonna be using
  */
-
-// Codes for numeric keypad
-// NUM  /   *   -
-//  7   8   9   x
-//  4   5   6   +
-//  1   2   3   x
-//  0   0   . ENTER
 
 KeyInfo NUM(KeyType::KeyCode, 0xDB, -1);
 KeyInfo DIV(KeyType::Dual, 0xDC, 0);
@@ -52,27 +35,82 @@ KeyInfo MUL(KeyType::Dual, 0xDD, 1);
 KeyInfo MIN(KeyType::Dual, 0xDE, 2);
 KeyInfo PLS(KeyType::Dual, 0xDF, 3);
 
+KeyInfo PR0(KeyType::Switch, 0, 0);
+KeyInfo PR1(KeyType::Switch, 0, 1);
+KeyInfo PR2(KeyType::Switch, 0, 2);
+KeyInfo PR3(KeyType::Switch, 0, 3);
+
+KeyInfo INS(KeyType::KeyCode, 0xD1, -1);
+KeyInfo DEL(KeyType::KeyCode, 0xD4, -1);
+KeyInfo HOM(KeyType::KeyCode, 0xD2, -1);
+KeyInfo END(KeyType::KeyCode, 0xD5, -1);
+KeyInfo PGU(KeyType::KeyCode, 0xD3, -1);
+KeyInfo PGD(KeyType::KeyCode, 0xD6, -1);
+
+KeyInfo RET(KeyType::KeyCode, 0xB0, -1);
+
+KeyInfo _U_(KeyType::KeyCode, 0xDA, -1);
+KeyInfo _D_(KeyType::KeyCode, 0xD9, -1);
+KeyInfo _L_(KeyType::KeyCode, 0xD8, -1);
+KeyInfo _R_(KeyType::KeyCode, 0xD7, -1);
+
+KeyInfo NM0(KeyType::KeyCode, 0xEA, -1);
+KeyInfo NM1(KeyType::KeyCode, 0xE1, -1);
+KeyInfo NM2(KeyType::KeyCode, 0xE2, -1);
+KeyInfo NM3(KeyType::KeyCode, 0xE3, -1);
+KeyInfo NM4(KeyType::KeyCode, 0xE4, -1);
+KeyInfo NM5(KeyType::KeyCode, 0xE5, -1);
+KeyInfo NM6(KeyType::KeyCode, 0xE6, -1);
+KeyInfo NM7(KeyType::KeyCode, 0xE7, -1);
+KeyInfo NM8(KeyType::KeyCode, 0xE8, -1);
+KeyInfo NM9(KeyType::KeyCode, 0xE9, -1);
+KeyInfo NMD(KeyType::KeyCode, 0xEB, -1);
+KeyInfo NMR(KeyType::KeyCode, 0xE0, -1);
+
+KeyInfo XXX;
+
+/*
+ * Switching keys: Hold NumLock, press 
+ *  / Layout 0
+ *  * Layout 1
+ *  - Layout 2
+ *  + Layout 3
+ */
+
+// Layout 0: Numeric pad
+// NUM  /   *   -
+//  7   8   9   x
+//  4   5   6   +
+//  1   2   3   x
+//  0   0   . ENTER
+
+
 KeyInfo keycode_preset0[ROWS][COLUMNS] = {
 	{ NUM, DIV, MUL, MIN },
-	{ KeyInfo(KeyType::KeyCode, 0xE7, -1), KeyInfo(KeyType::KeyCode, 0xE8, -1), KeyInfo(KeyType::KeyCode, 0xE9, -1), KeyInfo()},
-	{ KeyInfo(KeyType::KeyCode, 0xE4, -1), KeyInfo(KeyType::KeyCode, 0xE5, -1), KeyInfo(KeyType::KeyCode, 0xE6, -1), PLS},
-	{ KeyInfo(KeyType::KeyCode, 0xE1, -1), KeyInfo(KeyType::KeyCode, 0xE2, -1), KeyInfo(KeyType::KeyCode, 0xE3, -1), KeyInfo()},
-	{ KeyInfo(KeyType::KeyCode, 0xEA, -1), KeyInfo(KeyType::KeyCode, 0xEA, -1), KeyInfo(KeyType::KeyCode, 0xEB, -1), KeyInfo(KeyType::KeyCode, 0xE0, -1) }
+	{ NM7, NM8, NM9, XXX },
+	{ NM4, NM5, NM6, PLS },
+	{ NM1, NM2, NM3, XXX },
+	{ NM0, NM0, NMD, NMR }
 };
 
+// Layout 1: Navigation cluster
 // NUM   P0   P1   P2
 // INS  HOM  PGU   x
 // DEL  END  PGD   P3
-// BCK   U   FWD   x
+//  x    U    x    x
 //  L    D    R  ENTER
 
 KeyInfo keycode_preset1[ROWS][COLUMNS] = {
-	{ NUM, DIV, MUL, MIN },
-	{ KeyInfo(), KeyInfo(), KeyInfo(), KeyInfo() },
-	{ KeyInfo(), KeyInfo(), KeyInfo(), KeyInfo() },
-	{ KeyInfo(KeyType::KeyCode, 0xB3, -1), KeyInfo(KeyType::KeyCode, 0xDA, -1), KeyInfo(KeyType::KeyCode, 0xB2, -1), KeyInfo() },
-	{ KeyInfo(KeyType::KeyCode, 0xD8, -1), KeyInfo(KeyType::KeyCode, 0xD9, -1), KeyInfo(KeyType::KeyCode, 0xD7, -1), KeyInfo(KeyType::KeyCode, 0xB0, -1) }
+	{ NUM, PR0, PR1, PR2 },
+	{ INS, HOM, PGU, XXX },
+	{ DEL, END, PGD, PR3 },
+	{ XXX, _U_, XXX, XXX },
+	{ _L_, _D_, _R_, RET }
 };
+
+// Layout 2: TBD
+
+// Layout 3: TBD
 
 int strobe_row = 0;
 int q = 0;
@@ -111,7 +149,6 @@ bool debounce(unsigned long t_now, unsigned long t_prev) {
 
 void loop() {
 	unsigned long tick_now = millis();
-	int cnt;
 
 	// since we use non zero to indicate pressed state, we need
 	// to handle the edge case where millis() returns 0
@@ -130,7 +167,7 @@ void loop() {
 
 	int nextMap = -1;
 
-	for (cnt = 0; cnt < COLUMNS; cnt++) {
+	for (int cnt = 0; cnt < COLUMNS; cnt++) {
 		// ignore state change for pin if in debounce period
 		if (key_state[strobe_row][cnt] != 0) {
 			if (debounce(tick_now, key_state[strobe_row][cnt]) == true) {
@@ -138,36 +175,37 @@ void loop() {
 			}
 		}
 
+		auto keyInfo = keycode[strobe_row][cnt];
+
 		if (digitalRead(input_pins[cnt]) == HIGH) {
 			if (key_state[strobe_row][cnt] != 0) {
-				if (keycode[strobe_row][cnt].GetKeyCode() == NL_KEYCODE) {
+				if (num_down && keyInfo.GetType() == KeyType::Dual ||
+					num_down && keyInfo.GetType() == KeyType::Switch ) {
+					break;
+				}
+
+				if (keyInfo.GetKeyCode() == NL_KEYCODE) {
 					num_down = false;
 				}
 				else {
-					Keyboard.release(keycode[strobe_row][cnt].GetKeyCode());
+					Keyboard.release(keyInfo.GetKeyCode());
 				}
 				key_state[strobe_row][cnt] = 0;
 			}
 		}
 		else {
 			if (key_state[strobe_row][cnt] == 0) {
-				if (num_down) {
-					if (keycode[strobe_row][cnt].GetKeyCode() == DIV.GetKeyCode()) {
-						nextMap = 0;
-						break;
-					}
-					if (keycode[strobe_row][cnt].GetKeyCode() == MUL.GetKeyCode()) {
-						nextMap = 1;
-						break;
-					}
+				if (num_down && keyInfo.GetType() == KeyType::Dual ||
+					num_down && keyInfo.GetType() == KeyType::Switch) {
+					nextMap = keyInfo.GetSwitch();
+					break;
 				}
 
-
-				if (keycode[strobe_row][cnt].GetKeyCode() == NL_KEYCODE) {
+				if (keyInfo.GetKeyCode() == NL_KEYCODE) {
 					num_down = true;
 				}
 				else {
-					Keyboard.press(keycode[strobe_row][cnt].GetKeyCode());
+					Keyboard.press(keyInfo.GetKeyCode());
 				}
 				key_state[strobe_row][cnt] = tick_now;
 			}
