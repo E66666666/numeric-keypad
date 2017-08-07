@@ -5,8 +5,8 @@ enum class KeyType {
 	KeyCode,
 	Layer,
 	Dual,
-	None,
 	Macro,
+	None,
 };
 
 class KeyInfo {

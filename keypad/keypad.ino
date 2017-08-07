@@ -91,14 +91,22 @@ KeyInfo SPC(0x20);
 
 KeyInfo ___;
 
-Stroke helloWorldStrokes[5] = {
-	Stroke('h', 0, 20),
+Stroke helloWorldStrokes[13] = {
+	Stroke('H', 0, 19),
 	Stroke('e', 20, 40),
 	Stroke('l', 40, 60),
 	Stroke('l', 60, 80),
 	Stroke('o', 80, 100),
+	Stroke(',', 100, 110),
+	Stroke(' ', 110, 120),
+	Stroke('W', 120, 139),
+	Stroke('o', 140, 160),
+	Stroke('r', 160, 180),
+	Stroke('l', 200, 220),
+	Stroke('d', 220, 240),
+	Stroke('!', 240, 260),
 };
-Macro testMacro(5, helloWorldStrokes);
+Macro testMacro(13, helloWorldStrokes);
 KeyInfo M_HelloWorld(&testMacro);
 
 Stroke ctrlAltDelStrokes[3] = {
@@ -163,7 +171,7 @@ KeyInfo* keycode_layer2[ROWS][COLUMNS] = {
 	{ &__A, &__S, &__D, &RET }
 };
 
-// Layer 3: TBD
+// Layer 3: Macros
 
 KeyInfo* keycode_layer3[ROWS][COLUMNS] = {
 	{ &NUM, &LY0, &LY1, &LY2 },
@@ -198,7 +206,7 @@ bool debounce(unsigned long t_now, unsigned long t_prev) {
 	return false;
 }
 
-void playMacro(Macro * macro) {
+void playMacro(Macro *macro) {
 	if (macro == nullptr) {
 		return;
 	}
