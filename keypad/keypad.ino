@@ -114,6 +114,35 @@ Macro createMacro(int macro) {
 		
 		return Macro(3, strokes);
 	}
+	case 2: {
+		Stroke* strokes = (Stroke *)malloc(24 * sizeof(Stroke));
+		strokes[0] = Stroke(0x87, 00, 10);
+		strokes[1] = Stroke('r',  05, 10);
+		strokes[2] = Stroke('h',  35, 40);
+		strokes[3] = Stroke('t',  40, 60);
+		strokes[4] = Stroke('t',  60, 80);
+		strokes[5] = Stroke('p',  80, 100);
+		strokes[6] = Stroke('s', 100, 120);
+		strokes[7] = Stroke(':', 120, 140);
+		strokes[8] = Stroke('/', 140, 160);
+		strokes[9] = Stroke('/', 160, 180);
+		strokes[10] = Stroke('t', 180, 200);
+		strokes[11] = Stroke('w', 200, 220);
+		strokes[12] = Stroke('e', 220, 240);
+		strokes[13] = Stroke('a', 240, 260);
+		strokes[14] = Stroke('k', 260, 280);
+		strokes[15] = Stroke('e', 280, 300);
+		strokes[16] = Stroke('r', 300, 320);
+		strokes[17] = Stroke('s', 320, 340);
+		strokes[18] = Stroke('.', 340, 360);
+		strokes[19] = Stroke('n', 360, 380);
+		strokes[20] = Stroke('e', 380, 400);
+		strokes[21] = Stroke('t', 400, 420);
+		strokes[22] = Stroke('/', 420, 440);
+		strokes[23] = Stroke(0xB0, 440, 470);
+
+		return Macro(24, strokes);
+	}
 	default:
 		return Macro(0, nullptr);
 	}
@@ -121,6 +150,8 @@ Macro createMacro(int macro) {
 
 KeyInfo M_HelloWorld(KeyType::Macro, 0, -1, 0);
 KeyInfo M_CTRLALTDEL(KeyType::Macro, 0, -1, 1);
+KeyInfo M_TWEAKERS(KeyType::Macro, 0, -1, 2);
+
 
 /*
  * Switching keys: Hold NumLock, press 
@@ -189,7 +220,7 @@ KeyInfo*** getLayer(uint8_t layerId) {
 			{ &NUM, &LY0, &LY1, &LY2 },
 			{ &___, &___, &___, &___ },
 			{ &___, &M_HelloWorld, &M_CTRLALTDEL, &LY3 },
-			{ &___, &___, &___, &___ },
+			{ &___, &M_TWEAKERS, &___, &___ },
 			{ &___, &___, &___, &RET }
 		};
 
