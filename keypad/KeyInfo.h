@@ -1,10 +1,12 @@
 #pragma once
+#include "Macro.h"
 
 enum class KeyType {
 	KeyCode,
 	Layer,
 	Dual,
 	None,
+	Macro,
 };
 
 class KeyInfo {
@@ -24,6 +26,13 @@ public:
 		m_keyCode(keyCode),
 		m_switchId(switchId) { }
 
+	KeyInfo(Macro *macro) :
+		m_type(KeyType::Macro),
+		m_keyCode(0),
+		m_switchId(-1) {
+		m_macro = macro;
+	}
+
 	KeyType GetType() const {
 		return m_type;
 	}
@@ -36,9 +45,13 @@ public:
 		return m_switchId;
 	}
 
+	Macro* GetMacro() const {
+		return m_macro;
+	}
+
 private:
 	KeyType m_type;
 	uint8_t m_keyCode;
 	int8_t m_switchId;
-
+	Macro *m_macro = nullptr;
 };

@@ -1,6 +1,7 @@
 #include <Keyboard.h>
 
 #include "KeyInfo.h"
+#include "Macro.h"
 
 const uint8_t COLUMNS = 4;
 const uint8_t ROWS = 5;
@@ -90,6 +91,24 @@ KeyInfo SPC(0x20);
 
 KeyInfo ___;
 
+Stroke helloWorldStrokes[5] = {
+	Stroke('h', 0, 20),
+	Stroke('e', 20, 40),
+	Stroke('l', 40, 60),
+	Stroke('l', 60, 80),
+	Stroke('o', 80, 100),
+};
+Macro testMacro(5, helloWorldStrokes);
+KeyInfo M_HelloWorld(&testMacro);
+
+Stroke ctrlAltDelStrokes[3] = {
+	Stroke(KEY_LEFT_CTRL, 0, 100),
+	Stroke(KEY_LEFT_ALT, 20, 100),
+	Stroke(KEY_DELETE, 40, 100),
+};
+Macro ctrlAltDelMacro(3, ctrlAltDelStrokes);
+KeyInfo M_CTRLALTDEL(&ctrlAltDelMacro);
+
 /*
  * Switching keys: Hold NumLock, press 
  *  / for layer 0
@@ -149,7 +168,7 @@ KeyInfo* keycode_layer2[ROWS][COLUMNS] = {
 KeyInfo* keycode_layer3[ROWS][COLUMNS] = {
 	{ &NUM, &LY0, &LY1, &LY2 },
 	{ &___, &___, &___, &___ },
-	{ &___, &___, &___, &LY3 },
+	{ &___, &M_HelloWorld, &M_CTRLALTDEL, &LY3 },
 	{ &___, &___, &___, &___ },
 	{ &___, &___, &___, &RET }
 };
@@ -179,9 +198,39 @@ bool debounce(unsigned long t_now, unsigned long t_prev) {
 	return false;
 }
 
+void playMacro(Macro * macro) {
+	if (macro == nullptr) {
+		return;
+	}
+	if (macro->NumStrokes == 0) {
+		return;
+	}
+	unsigned long t_start = millis();
+	unsigned long t_total = macro->Strokes[macro->NumStrokes - 1].KeyUp - macro->Strokes[0].KeyDown;
+	unsigned extraDelay = 10;
+	while (true) {
+		if (millis() > t_start + t_total + extraDelay)
+			break;
+
+		for (int i = 0; i < macro->NumStrokes; i++) {
+			if (millis() > t_start + macro->Strokes[i].KeyDown && !macro->Strokes[i].Active) {
+				Keyboard.press(macro->Strokes[i].Key);
+				macro->Strokes[i].Active = true;
+			}
+			if (millis() > t_start + macro->Strokes[i].KeyUp && macro->Strokes[i].Active) {
+				Keyboard.release(macro->Strokes[i].Key);
+			}
+		}
+	}
+	for (int i = 0; i < macro->NumStrokes; i++) {
+		macro->Strokes[i].Active = false;
+	}
+}
+
 void loop() {
 	unsigned long tick_now = millis();
 	int8_t nextMap = -1;
+	Macro *nextMacro = nullptr;
 
 	// since we use non zero to indicate pressed state, we need
 	// to handle the edge case where millis() returns 0
@@ -209,6 +258,10 @@ void loop() {
 				if (num_down && keyInfo.GetType() == KeyType::Dual ||
 					num_down && keyInfo.GetType() == KeyType::Layer) {
 					break;
+				}
+
+				if (keyInfo.GetType() == KeyType::Macro) {
+					nextMacro = keyInfo.GetMacro();
 				}
 
 				if (keyInfo.GetKeyCode() == NL_KEYCODE) {
@@ -251,6 +304,9 @@ void loop() {
 		case 2:
 			memcpy(keycode, keycode_layer2, sizeof(keycode_layer2));
 			break;
+		case 3:
+			memcpy(keycode, keycode_layer3, sizeof(keycode_layer3));
+			break;
 		default:
 			break;
 	}
@@ -269,4 +325,8 @@ void loop() {
 
 	digitalWrite(strobe_pins[strobe_row], HIGH);
 	strobe_row++;
+
+	if (nextMacro != nullptr) {
+		playMacro(nextMacro);
+	}
 }
