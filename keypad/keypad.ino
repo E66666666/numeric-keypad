@@ -84,29 +84,41 @@ KeyInfo TAB(0xB3);
 KeyInfo SPC(0x20);
 KeyInfo ___;
 
-Stroke helloWorldStrokes[13] = {
-	Stroke('H', 0, 19),
-	Stroke('e', 20, 40),
-	Stroke('l', 40, 60),
-	Stroke('l', 60, 80),
-	Stroke('o', 80, 100),
-	Stroke(',', 100, 110),
-	Stroke(' ', 110, 120),
-	Stroke('W', 120, 139),
-	Stroke('o', 140, 160),
-	Stroke('r', 160, 180),
-	Stroke('l', 200, 220),
-	Stroke('d', 220, 240),
-	Stroke('!', 240, 260),
-};
+Macro createMacro(int macro) {
+	switch (macro) {
+	case 0: {
+		Stroke* strokes = (Stroke *)malloc(13 * sizeof(Stroke));
+		
+		
+		strokes[0] = Stroke('H', 0, 19)   ;
+		strokes[1] = Stroke('e', 20, 40)  ;
+		strokes[2] = Stroke('l', 40, 60)  ;
+		strokes[3] = Stroke('l', 60, 80)  ;
+		strokes[4] = Stroke('o', 80, 100) ;
+		strokes[5] = Stroke(',', 100, 110);
+		strokes[6] = Stroke(' ', 110, 120);
+		strokes[7] = Stroke('W', 120, 139);
+		strokes[8] = Stroke('o', 140, 160);
+		strokes[9] = Stroke('r', 160, 180);
+		strokes[10] = Stroke('l', 200, 220);
+		strokes[11] = Stroke('d', 220, 240);
+		strokes[12] = Stroke('!', 240, 260);
+		
+		return Macro(13, strokes);
+	}
+	case 1: {
+		Stroke* strokes = (Stroke *)malloc(3 * sizeof(Stroke));
+		strokes[0] = Stroke(KEY_LEFT_CTRL, 0, 100);
+		strokes[1] = Stroke(KEY_LEFT_ALT, 20, 100);
+		strokes[2] = Stroke(KEY_DELETE, 40, 100);
+		
+		return Macro(3, strokes);
+	}
+	default:
+		return Macro(0, nullptr);
+	}
+}
 
-Stroke ctrlAltDelStrokes[3] = {
-	Stroke(KEY_LEFT_CTRL, 0, 100),
-	Stroke(KEY_LEFT_ALT, 20, 100),
-	Stroke(KEY_DELETE, 40, 100),
-};
-
-Macro macros[] = { Macro(13, helloWorldStrokes), Macro(3, ctrlAltDelStrokes) };
 KeyInfo M_HelloWorld(KeyType::Macro, 0, -1, 0);
 KeyInfo M_CTRLALTDEL(KeyType::Macro, 0, -1, 1);
 
@@ -117,62 +129,6 @@ KeyInfo M_CTRLALTDEL(KeyType::Macro, 0, -1, 1);
  *  - for layer 2
  *  + for layer 3
  */
-
-// Layer 0: Numeric pad
-// NUM  /   *   -
-//  7   8   9   x
-//  4   5   6   +
-//  1   2   3   x
-//  0   0   . ENTER
-
-
-//KeyInfo* keycode_layer0[ROWS][COLUMNS] = {
-//	{ &NUM, &DIV, &MUL, &MIN },
-//	{ &NM7, &NM8, &NM9, &___ },
-//	{ &NM4, &NM5, &NM6, &PLS },
-//	{ &NM1, &NM2, &NM3, &___ },
-//	{ &NM0, &NM0, &NMD, &NMR }
-//};
-//
-//// Layer 1: Navigation cluster
-//// NUM  PRT  WIN  MEN
-//// INS  HOM  PGU   x
-//// DEL  END  PGD   P3
-////  x    U    x    x
-////  L    D    R  ENTER
-//
-//KeyInfo* keycode_layer1[ROWS][COLUMNS] = {
-//	{ &NUM, &PRT, &WIN, &MEN },
-//	{ &INS, &HOM, &PGU, &___ },
-//	{ &DEL, &END, &PGD, &LY3 },
-//	{ &___, &_U_, &___, &___ },
-//	{ &_L_, &_D_, &_R_, &RET }
-//};
-//
-//// Layer 2: WASD
-//// NUM   P0   P1   P2
-////  1    2    3    x
-//// TAB  SPC   R    4
-////  Q    W    E    x
-////  A    S    D    F
-//
-//KeyInfo* keycode_layer2[ROWS][COLUMNS] = {
-//	{ &NUM, &LY0, &LY1, &LY2 },
-//	{ &__1, &__2, &__3, &___ },
-//	{ &TAB, &SPC, &__R, &__4 },
-//	{ &__Q, &__W, &__E, &___ },
-//	{ &__A, &__S, &__D, &RET }
-//};
-//
-//// Layer 3: Macros
-//
-//KeyInfo* keycode_layer3[ROWS][COLUMNS] = {
-//	{ &NUM, &LY0, &LY1, &LY2 },
-//	{ &___, &___, &___, &___ },
-//	{ &___, &M_HelloWorld, &M_CTRLALTDEL, &LY3 },
-//	{ &___, &___, &___, &___ },
-//	{ &___, &___, &___, &RET }
-//};
 
 void makeLayer(KeyInfo *keycode_layer3[5][4], KeyInfo ***&layer) {
 	layer = (KeyInfo ***)malloc(ROWS * sizeof(KeyInfo **));
@@ -247,8 +203,6 @@ KeyInfo*** getLayer(uint8_t layerId) {
 }
 
 void setup() {
-	//memcpy(keycode, keycode_layer0, sizeof(keycode_layer0));
-
 	keycode = getLayer(0);
 
 	for (uint8_t cnt = 0; cnt < ROWS; cnt++) {
@@ -274,7 +228,9 @@ bool debounce(unsigned long t_now, unsigned long t_prev) {
 	return false;
 }
 
-void playMacro(Macro *macro) {
+void playMacro(int nextMacro) {
+	Macro macro_ = createMacro(nextMacro);
+	Macro* macro = &macro_;
 	if (macro == nullptr) {
 		return;
 	}
@@ -284,6 +240,14 @@ void playMacro(Macro *macro) {
 	unsigned long t_start = millis();
 	unsigned long t_total = macro->Strokes[macro->NumStrokes - 1].KeyUp - macro->Strokes[0].KeyDown;
 	unsigned extraDelay = 10;
+
+	for (int i = 0; i < macro->NumStrokes; i++) {
+		auto key = macro->Strokes[i].Key;
+		auto active = macro->Strokes[i].Active;
+		auto keyup = macro->Strokes[i].KeyUp;
+		auto keydown = macro->Strokes[i].KeyDown;
+	}
+
 	while (true) {
 		if (millis() > t_start + t_total + extraDelay)
 			break;
@@ -298,9 +262,7 @@ void playMacro(Macro *macro) {
 			}
 		}
 	}
-	for (int i = 0; i < macro->NumStrokes; i++) {
-		macro->Strokes[i].Active = false;
-	}
+	free(macro->Strokes);
 }
 
 void loop() {
@@ -400,6 +362,6 @@ void loop() {
 	strobe_row++;
 
 	if (nextMacro >= 0) {
-		playMacro(&macros[nextMacro]);
+		playMacro(nextMacro);
 	}
 }
