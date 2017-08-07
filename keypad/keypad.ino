@@ -21,7 +21,8 @@ const uint8_t input_pins[COLUMNS] = {10, 16, 14, 15};
 const uint8_t strobe_pins[ROWS] = {9, 8, 7, 6, 5};
 
 unsigned long key_state[ROWS][COLUMNS];
-KeyInfo *keycode[ROWS][COLUMNS];
+//KeyInfo *keycode[ROWS][COLUMNS];
+KeyInfo ***keycode;
 
 uint8_t strobe_row = 0;
 bool num_down = false;
@@ -37,30 +38,24 @@ KeyInfo DIV(KeyType::Dual, 0xDC, 0);
 KeyInfo MUL(KeyType::Dual, 0xDD, 1);
 KeyInfo MIN(KeyType::Dual, 0xDE, 2);
 KeyInfo PLS(KeyType::Dual, 0xDF, 3);
-
 KeyInfo PRT(KeyType::Dual, 0xCE, 0);
 KeyInfo WIN(KeyType::Dual, 0x87, 1);
 KeyInfo MEN(KeyType::Dual, 0xED, 2);
-
 KeyInfo LY0(KeyType::Layer, 0, 0);
 KeyInfo LY1(KeyType::Layer, 0, 1);
 KeyInfo LY2(KeyType::Layer, 0, 2);
 KeyInfo LY3(KeyType::Layer, 0, 3);
-
 KeyInfo INS(0xD1);
 KeyInfo DEL(0xD4);
 KeyInfo HOM(0xD2);
 KeyInfo END(0xD5);
 KeyInfo PGU(0xD3);
 KeyInfo PGD(0xD6);
-
 KeyInfo RET(0xB0);
-
 KeyInfo _U_(0xDA);
 KeyInfo _D_(0xD9);
 KeyInfo _L_(0xD8);
 KeyInfo _R_(0xD7);
-
 KeyInfo NM0(0xEA);
 KeyInfo NM1(0xE1);
 KeyInfo NM2(0xE2);
@@ -73,7 +68,6 @@ KeyInfo NM8(0xE8);
 KeyInfo NM9(0xE9);
 KeyInfo NMD(0xEB);
 KeyInfo NMR(0xE0);
-
 KeyInfo __W('w');
 KeyInfo __A('a');
 KeyInfo __S('s');
@@ -88,7 +82,6 @@ KeyInfo __3('3');
 KeyInfo __4(KeyType::Dual, '4', 3);
 KeyInfo TAB(0xB3);
 KeyInfo SPC(0x20);
-
 KeyInfo ___;
 
 Stroke helloWorldStrokes[13] = {
@@ -106,16 +99,16 @@ Stroke helloWorldStrokes[13] = {
 	Stroke('d', 220, 240),
 	Stroke('!', 240, 260),
 };
-Macro testMacro(13, helloWorldStrokes);
-KeyInfo M_HelloWorld(&testMacro);
 
 Stroke ctrlAltDelStrokes[3] = {
 	Stroke(KEY_LEFT_CTRL, 0, 100),
 	Stroke(KEY_LEFT_ALT, 20, 100),
 	Stroke(KEY_DELETE, 40, 100),
 };
-Macro ctrlAltDelMacro(3, ctrlAltDelStrokes);
-KeyInfo M_CTRLALTDEL(&ctrlAltDelMacro);
+
+Macro macros[] = { Macro(13, helloWorldStrokes), Macro(3, ctrlAltDelStrokes) };
+KeyInfo M_HelloWorld(KeyType::Macro, 0, -1, 0);
+KeyInfo M_CTRLALTDEL(KeyType::Macro, 0, -1, 1);
 
 /*
  * Switching keys: Hold NumLock, press 
@@ -133,56 +126,131 @@ KeyInfo M_CTRLALTDEL(&ctrlAltDelMacro);
 //  0   0   . ENTER
 
 
-KeyInfo* keycode_layer0[ROWS][COLUMNS] = {
-	{ &NUM, &DIV, &MUL, &MIN },
-	{ &NM7, &NM8, &NM9, &___ },
-	{ &NM4, &NM5, &NM6, &PLS },
-	{ &NM1, &NM2, &NM3, &___ },
-	{ &NM0, &NM0, &NMD, &NMR }
-};
+//KeyInfo* keycode_layer0[ROWS][COLUMNS] = {
+//	{ &NUM, &DIV, &MUL, &MIN },
+//	{ &NM7, &NM8, &NM9, &___ },
+//	{ &NM4, &NM5, &NM6, &PLS },
+//	{ &NM1, &NM2, &NM3, &___ },
+//	{ &NM0, &NM0, &NMD, &NMR }
+//};
+//
+//// Layer 1: Navigation cluster
+//// NUM  PRT  WIN  MEN
+//// INS  HOM  PGU   x
+//// DEL  END  PGD   P3
+////  x    U    x    x
+////  L    D    R  ENTER
+//
+//KeyInfo* keycode_layer1[ROWS][COLUMNS] = {
+//	{ &NUM, &PRT, &WIN, &MEN },
+//	{ &INS, &HOM, &PGU, &___ },
+//	{ &DEL, &END, &PGD, &LY3 },
+//	{ &___, &_U_, &___, &___ },
+//	{ &_L_, &_D_, &_R_, &RET }
+//};
+//
+//// Layer 2: WASD
+//// NUM   P0   P1   P2
+////  1    2    3    x
+//// TAB  SPC   R    4
+////  Q    W    E    x
+////  A    S    D    F
+//
+//KeyInfo* keycode_layer2[ROWS][COLUMNS] = {
+//	{ &NUM, &LY0, &LY1, &LY2 },
+//	{ &__1, &__2, &__3, &___ },
+//	{ &TAB, &SPC, &__R, &__4 },
+//	{ &__Q, &__W, &__E, &___ },
+//	{ &__A, &__S, &__D, &RET }
+//};
+//
+//// Layer 3: Macros
+//
+//KeyInfo* keycode_layer3[ROWS][COLUMNS] = {
+//	{ &NUM, &LY0, &LY1, &LY2 },
+//	{ &___, &___, &___, &___ },
+//	{ &___, &M_HelloWorld, &M_CTRLALTDEL, &LY3 },
+//	{ &___, &___, &___, &___ },
+//	{ &___, &___, &___, &RET }
+//};
 
-// Layer 1: Navigation cluster
-// NUM  PRT  WIN  MEN
-// INS  HOM  PGU   x
-// DEL  END  PGD   P3
-//  x    U    x    x
-//  L    D    R  ENTER
+void makeLayer(KeyInfo *keycode_layer3[5][4], KeyInfo ***&layer) {
+	layer = (KeyInfo ***)malloc(ROWS * sizeof(KeyInfo **));
+	for (uint8_t row = 0; row < ROWS; row++) {
+		layer[row] = (KeyInfo **)malloc(COLUMNS * sizeof(KeyInfo *));
+	}
 
-KeyInfo* keycode_layer1[ROWS][COLUMNS] = {
-	{ &NUM, &PRT, &WIN, &MEN },
-	{ &INS, &HOM, &PGU, &___ },
-	{ &DEL, &END, &PGD, &LY3 },
-	{ &___, &_U_, &___, &___ },
-	{ &_L_, &_D_, &_R_, &RET }
-};
+	for (uint8_t row = 0; row < ROWS; row++) {
+		for (uint8_t col = 0; col < COLUMNS; col++) {
+			layer[row][col] = keycode_layer3[row][col];
+		}
+	}
+}
 
-// Layer 2: WASD
-// NUM   P0   P1   P2
-//  1    2    3    x
-// TAB  SPC   R    4
-//  Q    W    E    x
-//  A    S    D    F
+KeyInfo*** getLayer(uint8_t layerId) {
+	switch(layerId) {
+	case 0: {
+		KeyInfo* keycode_layer0[ROWS][COLUMNS] = {
+			{ &NUM, &DIV, &MUL, &MIN },
+			{ &NM7, &NM8, &NM9, &___ },
+			{ &NM4, &NM5, &NM6, &PLS },
+			{ &NM1, &NM2, &NM3, &___ },
+			{ &NM0, &NM0, &NMD, &NMR }
+		};
 
-KeyInfo* keycode_layer2[ROWS][COLUMNS] = {
-	{ &NUM, &LY0, &LY1, &LY2 },
-	{ &__1, &__2, &__3, &___ },
-	{ &TAB, &SPC, &__R, &__4 },
-	{ &__Q, &__W, &__E, &___ },
-	{ &__A, &__S, &__D, &RET }
-};
+		KeyInfo ***layer;
+		makeLayer(keycode_layer0, layer);
+		return layer;
+	}
+	case 1: {
+		KeyInfo* keycode_layer1[ROWS][COLUMNS] = {
+			{ &NUM, &PRT, &WIN, &MEN },
+			{ &INS, &HOM, &PGU, &___ },
+			{ &DEL, &END, &PGD, &LY3 },
+			{ &___, &_U_, &___, &___ },
+			{ &_L_, &_D_, &_R_, &RET }
+		};
 
-// Layer 3: Macros
+		KeyInfo ***layer;
+		makeLayer(keycode_layer1, layer);
+		return layer;
+	}
+	case 2: {
+		KeyInfo* keycode_layer2[ROWS][COLUMNS] = {
+			{ &NUM, &LY0, &LY1, &LY2 },
+			{ &__1, &__2, &__3, &___ },
+			{ &TAB, &SPC, &__R, &__4 },
+			{ &__Q, &__W, &__E, &___ },
+			{ &__A, &__S, &__D, &RET }
+		};
 
-KeyInfo* keycode_layer3[ROWS][COLUMNS] = {
-	{ &NUM, &LY0, &LY1, &LY2 },
-	{ &___, &___, &___, &___ },
-	{ &___, &M_HelloWorld, &M_CTRLALTDEL, &LY3 },
-	{ &___, &___, &___, &___ },
-	{ &___, &___, &___, &RET }
-};
+		KeyInfo ***layer;
+		makeLayer(keycode_layer2, layer);
+		return layer;
+	}
+	case 3: {
+		KeyInfo *keycode_layer3[ROWS][COLUMNS] = {
+			{ &NUM, &LY0, &LY1, &LY2 },
+			{ &___, &___, &___, &___ },
+			{ &___, &M_HelloWorld, &M_CTRLALTDEL, &LY3 },
+			{ &___, &___, &___, &___ },
+			{ &___, &___, &___, &RET }
+		};
+
+		KeyInfo ***layer;
+		makeLayer(keycode_layer3, layer);
+		return layer;
+	}
+	default:
+		return nullptr;
+	}
+}
 
 void setup() {
-	memcpy(keycode, keycode_layer0, sizeof(keycode_layer0));
+	//memcpy(keycode, keycode_layer0, sizeof(keycode_layer0));
+
+	keycode = getLayer(0);
+
 	for (uint8_t cnt = 0; cnt < ROWS; cnt++) {
 		pinMode(strobe_pins[cnt], OUTPUT);
 		digitalWrite(strobe_pins[cnt], HIGH);
@@ -238,7 +306,7 @@ void playMacro(Macro *macro) {
 void loop() {
 	unsigned long tick_now = millis();
 	int8_t nextMap = -1;
-	Macro *nextMacro = nullptr;
+	int8_t nextMacro = -1;
 
 	// since we use non zero to indicate pressed state, we need
 	// to handle the edge case where millis() returns 0
@@ -304,17 +372,14 @@ void loop() {
 
 	switch(nextMap) {
 		case 0:
-			memcpy(keycode, keycode_layer0, sizeof(keycode_layer0));
-			break;
 		case 1:
-			memcpy(keycode, keycode_layer1, sizeof(keycode_layer1));
-			break;
 		case 2:
-			memcpy(keycode, keycode_layer2, sizeof(keycode_layer2));
-			break;
 		case 3:
-			memcpy(keycode, keycode_layer3, sizeof(keycode_layer3));
-			break;
+			for (int row = 0; row < ROWS; row++) {
+				free(keycode[row]);
+			}
+			free(keycode);
+			keycode = getLayer(nextMap);
 		default:
 			break;
 	}
@@ -334,7 +399,7 @@ void loop() {
 	digitalWrite(strobe_pins[strobe_row], HIGH);
 	strobe_row++;
 
-	if (nextMacro != nullptr) {
-		playMacro(nextMacro);
+	if (nextMacro >= 0) {
+		playMacro(&macros[nextMacro]);
 	}
 }
