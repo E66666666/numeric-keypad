@@ -1,5 +1,4 @@
 #pragma once
-#include "Macro.h"
 
 enum class KeyType : uint8_t {
 	KeyCode,

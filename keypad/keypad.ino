@@ -1,4 +1,7 @@
 #include <Keyboard.h>
+#include <StandardCplusplus.h>
+#include <vector>
+#include <array>
 
 #include "KeyInfo.h"
 #include "Macro.h"
@@ -21,8 +24,7 @@ const uint8_t input_pins[COLUMNS] = {10, 16, 14, 15};
 const uint8_t strobe_pins[ROWS] = {9, 8, 7, 6, 5};
 
 unsigned long key_state[ROWS][COLUMNS];
-//KeyInfo *keycode[ROWS][COLUMNS];
-KeyInfo ***keycode;
+std::vector<std::vector<KeyInfo>> keycode;
 
 uint8_t strobe_row = 0;
 bool num_down = false;
@@ -87,71 +89,65 @@ KeyInfo ___;
 Macro createMacro(int macro) {
 	switch (macro) {
 	case 0: {
-		Stroke* strokes = (Stroke *)malloc(13 * sizeof(Stroke));
-		
-		
-		strokes[0] = Stroke('H', 0, 19)   ;
-		strokes[1] = Stroke('e', 20, 40)  ;
-		strokes[2] = Stroke('l', 40, 60)  ;
-		strokes[3] = Stroke('l', 60, 80)  ;
-		strokes[4] = Stroke('o', 80, 100) ;
-		strokes[5] = Stroke(',', 100, 110);
-		strokes[6] = Stroke(' ', 110, 120);
-		strokes[7] = Stroke('W', 120, 139);
-		strokes[8] = Stroke('o', 140, 160);
-		strokes[9] = Stroke('r', 160, 180);
-		strokes[10] = Stroke('l', 200, 220);
-		strokes[11] = Stroke('d', 220, 240);
-		strokes[12] = Stroke('!', 240, 260);
-		
-		return Macro(13, strokes);
+		return Macro(std::vector<Stroke>{
+			{ Stroke('H', 0, 19) },
+			{ Stroke('e', 20, 40) },
+			{ Stroke('l', 40, 60) },
+			{ Stroke('l', 60, 80) },
+			{ Stroke('o', 80, 100) },
+			{ Stroke(',', 100, 110) },
+			{ Stroke(' ', 110, 120) },
+			{ Stroke('W', 120, 139) },
+			{ Stroke('o', 140, 160) },
+			{ Stroke('r', 160, 180) },
+			{ Stroke('l', 200, 220) },
+			{ Stroke('d', 220, 240) },
+			{ Stroke('!', 240, 260) },
+		});
 	}
 	case 1: {
-		Stroke* strokes = (Stroke *)malloc(3 * sizeof(Stroke));
-		strokes[0] = Stroke(KEY_LEFT_CTRL, 0, 100);
-		strokes[1] = Stroke(KEY_LEFT_ALT, 20, 100);
-		strokes[2] = Stroke(KEY_DELETE, 40, 100);
-		
-		return Macro(3, strokes);
+		return Macro(std::vector<Stroke>{
+			{ Stroke(KEY_LEFT_CTRL, 0, 100) },
+			{ Stroke(KEY_LEFT_ALT, 20, 100) },
+			{ Stroke(KEY_DELETE, 40, 100) },
+		});
 	}
 	case 2: {
-		Stroke* strokes = (Stroke *)malloc(24 * sizeof(Stroke));
-		strokes[0] = Stroke(0x87, 00, 10);
-		strokes[1] = Stroke('r',  05, 10);
-		strokes[2] = Stroke('h',  35, 40);
-		strokes[3] = Stroke('t',  40, 60);
-		strokes[4] = Stroke('t',  60, 80);
-		strokes[5] = Stroke('p',  80, 100);
-		strokes[6] = Stroke('s', 100, 120);
-		strokes[7] = Stroke(':', 120, 140);
-		strokes[8] = Stroke('/', 140, 160);
-		strokes[9] = Stroke('/', 160, 180);
-		strokes[10] = Stroke('t', 180, 200);
-		strokes[11] = Stroke('w', 200, 220);
-		strokes[12] = Stroke('e', 220, 240);
-		strokes[13] = Stroke('a', 240, 260);
-		strokes[14] = Stroke('k', 260, 280);
-		strokes[15] = Stroke('e', 280, 300);
-		strokes[16] = Stroke('r', 300, 320);
-		strokes[17] = Stroke('s', 320, 340);
-		strokes[18] = Stroke('.', 340, 360);
-		strokes[19] = Stroke('n', 360, 380);
-		strokes[20] = Stroke('e', 380, 400);
-		strokes[21] = Stroke('t', 400, 420);
-		strokes[22] = Stroke('/', 420, 440);
-		strokes[23] = Stroke(0xB0, 440, 470);
-
-		return Macro(24, strokes);
+		return Macro(std::vector<Stroke>{
+			{ Stroke(0x87, 00, 10) },
+			{ Stroke('r',  05, 10) },
+			{ Stroke('h',  35, 40) },
+			{ Stroke('t',  40, 60) },
+			{ Stroke('t',  60, 80) },
+			{ Stroke('p',  80, 100) },
+			{ Stroke('s', 100, 120) },
+			{ Stroke(':', 120, 140) },
+			{ Stroke('/', 140, 160) },
+			{ Stroke('/', 160, 180) },
+			{ Stroke('t', 180, 200) },
+			{ Stroke('w', 200, 220) },
+			{ Stroke('e', 220, 240) },
+			{ Stroke('a', 240, 260) },
+			{ Stroke('k', 260, 280) },
+			{ Stroke('e', 280, 300) },
+			{ Stroke('r', 300, 320) },
+			{ Stroke('s', 320, 340) },
+			{ Stroke('.', 340, 360) },
+			{ Stroke('n', 360, 380) },
+			{ Stroke('e', 380, 400) },
+			{ Stroke('t', 400, 420) },
+			{ Stroke('/', 420, 440) },
+			{ Stroke(0xB0, 440, 470) },
+		});
 	}
 	default:
-		return Macro(0, nullptr);
+		return Macro(std::vector<Stroke>{});
 	}
 }
 
 KeyInfo M_HelloWorld(KeyType::Macro, 0, -1, 0);
 KeyInfo M_CTRLALTDEL(KeyType::Macro, 0, -1, 1);
 KeyInfo M_TWEAKERS(KeyType::Macro, 0, -1, 2);
-
 
 /*
  * Switching keys: Hold NumLock, press 
@@ -161,75 +157,46 @@ KeyInfo M_TWEAKERS(KeyType::Macro, 0, -1, 2);
  *  + for layer 3
  */
 
-void makeLayer(KeyInfo *keycode_layer3[5][4], KeyInfo ***&layer) {
-	layer = (KeyInfo ***)malloc(ROWS * sizeof(KeyInfo **));
-	for (uint8_t row = 0; row < ROWS; row++) {
-		layer[row] = (KeyInfo **)malloc(COLUMNS * sizeof(KeyInfo *));
-	}
-
-	for (uint8_t row = 0; row < ROWS; row++) {
-		for (uint8_t col = 0; col < COLUMNS; col++) {
-			layer[row][col] = keycode_layer3[row][col];
-		}
-	}
-}
-
-KeyInfo*** getLayer(uint8_t layerId) {
+std::vector<std::vector<KeyInfo>> getLayer(uint8_t layerId) {
 	switch(layerId) {
 	case 0: {
-		KeyInfo* keycode_layer0[ROWS][COLUMNS] = {
-			{ &NUM, &DIV, &MUL, &MIN },
-			{ &NM7, &NM8, &NM9, &___ },
-			{ &NM4, &NM5, &NM6, &PLS },
-			{ &NM1, &NM2, &NM3, &___ },
-			{ &NM0, &NM0, &NMD, &NMR }
+		return {
+			{ NUM, DIV, MUL, MIN },
+			{ NM7, NM8, NM9, ___ },
+			{ NM4, NM5, NM6, PLS },
+			{ NM1, NM2, NM3, ___ },
+			{ NM0, NM0, NMD, NMR }
 		};
-
-		KeyInfo ***layer;
-		makeLayer(keycode_layer0, layer);
-		return layer;
 	}
 	case 1: {
-		KeyInfo* keycode_layer1[ROWS][COLUMNS] = {
-			{ &NUM, &PRT, &WIN, &MEN },
-			{ &INS, &HOM, &PGU, &___ },
-			{ &DEL, &END, &PGD, &LY3 },
-			{ &___, &_U_, &___, &___ },
-			{ &_L_, &_D_, &_R_, &RET }
+		return {
+			{ NUM, PRT, WIN, MEN },
+			{ INS, HOM, PGU, ___ },
+			{ DEL, END, PGD, LY3 },
+			{ ___, _U_, ___, ___ },
+			{ _L_, _D_, _R_, RET }
 		};
-
-		KeyInfo ***layer;
-		makeLayer(keycode_layer1, layer);
-		return layer;
 	}
 	case 2: {
-		KeyInfo* keycode_layer2[ROWS][COLUMNS] = {
-			{ &NUM, &LY0, &LY1, &LY2 },
-			{ &__1, &__2, &__3, &___ },
-			{ &TAB, &SPC, &__R, &__4 },
-			{ &__Q, &__W, &__E, &___ },
-			{ &__A, &__S, &__D, &RET }
+		return {
+			{ NUM, LY0, LY1, LY2 },
+			{ __1, __2, __3, ___ },
+			{ TAB, SPC, __R, __4 },
+			{ __Q, __W, __E, ___ },
+			{ __A, __S, __D, RET }
 		};
-
-		KeyInfo ***layer;
-		makeLayer(keycode_layer2, layer);
-		return layer;
 	}
 	case 3: {
-		KeyInfo *keycode_layer3[ROWS][COLUMNS] = {
-			{ &NUM, &LY0, &LY1, &LY2 },
-			{ &___, &___, &___, &___ },
-			{ &___, &M_HelloWorld, &M_CTRLALTDEL, &LY3 },
-			{ &___, &M_TWEAKERS, &___, &___ },
-			{ &___, &___, &___, &RET }
+		return {
+			{ NUM, LY0, LY1, LY2 },
+			{ ___, ___, ___, ___ },
+			{ ___, M_HelloWorld, M_CTRLALTDEL, LY3 },
+			{ ___, M_TWEAKERS, ___, ___ },
+			{ ___, ___, ___, RET }
 		};
-
-		KeyInfo ***layer;
-		makeLayer(keycode_layer3, layer);
-		return layer;
 	}
 	default:
-		return nullptr;
+		return std::vector<std::vector<KeyInfo>>{};
 	}
 }
 
@@ -260,40 +227,28 @@ bool debounce(unsigned long t_now, unsigned long t_prev) {
 }
 
 void playMacro(int nextMacro) {
-	Macro macro_ = createMacro(nextMacro);
-	Macro* macro = &macro_;
-	if (macro == nullptr) {
-		return;
-	}
-	if (macro->NumStrokes == 0) {
+	Macro macro = createMacro(nextMacro);
+	if (macro.Strokes.size() == 0) {
 		return;
 	}
 	unsigned long t_start = millis();
-	unsigned long t_total = macro->Strokes[macro->NumStrokes - 1].KeyUp - macro->Strokes[0].KeyDown;
+	unsigned long t_total = macro.Strokes.back().KeyUp - macro.Strokes.front().KeyDown;
 	unsigned extraDelay = 10;
-
-	for (int i = 0; i < macro->NumStrokes; i++) {
-		auto key = macro->Strokes[i].Key;
-		auto active = macro->Strokes[i].Active;
-		auto keyup = macro->Strokes[i].KeyUp;
-		auto keydown = macro->Strokes[i].KeyDown;
-	}
 
 	while (true) {
 		if (millis() > t_start + t_total + extraDelay)
 			break;
 
-		for (int i = 0; i < macro->NumStrokes; i++) {
-			if (millis() > t_start + macro->Strokes[i].KeyDown && !macro->Strokes[i].Active) {
-				Keyboard.press(macro->Strokes[i].Key);
-				macro->Strokes[i].Active = true;
+		for (auto &stroke : macro.Strokes) {
+			if (millis() > t_start + stroke.KeyDown && !stroke.Active) {
+				Keyboard.press(stroke.Key);
+				stroke.Active = true;
 			}
-			if (millis() > t_start + macro->Strokes[i].KeyUp && macro->Strokes[i].Active) {
-				Keyboard.release(macro->Strokes[i].Key);
+			if (millis() > t_start + stroke.KeyUp && stroke.Active) {
+				Keyboard.release(stroke.Key);
 			}
 		}
 	}
-	free(macro->Strokes);
 }
 
 void loop() {
@@ -320,7 +275,7 @@ void loop() {
 			}
 		}
 
-		auto keyInfo = *keycode[strobe_row][cnt];
+		auto keyInfo = keycode[strobe_row][cnt];
 		if (digitalRead(input_pins[cnt]) == HIGH) { 
 			// key up
 			if (key_state[strobe_row][cnt] != 0) {
@@ -368,10 +323,6 @@ void loop() {
 		case 1:
 		case 2:
 		case 3:
-			for (int row = 0; row < ROWS; row++) {
-				free(keycode[row]);
-			}
-			free(keycode);
 			keycode = getLayer(nextMap);
 		default:
 			break;
