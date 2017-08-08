@@ -1,4 +1,16 @@
 #pragma once
+#include <StandardCplusplus.h>
+#include <vector>
+
+enum class MacroType {
+	HelloWorld,
+	CRTL_ALT_DEL,
+	Admin_CMD,
+	WinMin,
+	WinMax,
+	WinLeft,
+	WinRight,
+};
 
 struct Stroke {
 	Stroke(uint8_t key, unsigned long keyDown, unsigned long keyUp): 
@@ -11,9 +23,8 @@ struct Stroke {
 };
 
 struct Macro {
-	Macro(uint8_t numStrokes, Stroke *strokes):
-		  NumStrokes(numStrokes), Strokes(strokes){}
+	Macro(std::vector<Stroke> strokes):
+		  Strokes(strokes){}
 
-	uint8_t NumStrokes;
-	Stroke *Strokes;
+	std::vector<Stroke> Strokes;
 };
