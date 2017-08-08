@@ -1,7 +1,6 @@
 #include <Keyboard.h>
 #include <StandardCplusplus.h>
 #include <vector>
-#include <array>
 
 #include "KeyInfo.h"
 #include "Macro.h"
@@ -35,60 +34,9 @@ bool switchedLayer = false;
  * Define all keys we're gonna be using
  */
 
-KeyInfo NUM(KeyType::KeyCode, 0xDB, -1);
-KeyInfo DIV(KeyType::Dual, 0xDC, 0);
-KeyInfo MUL(KeyType::Dual, 0xDD, 1);
-KeyInfo MIN(KeyType::Dual, 0xDE, 2);
-KeyInfo PLS(KeyType::Dual, 0xDF, 3);
-KeyInfo PRT(KeyType::Dual, 0xCE, 0);
-KeyInfo WIN(KeyType::Dual, 0x87, 1);
-KeyInfo MEN(KeyType::Dual, 0xED, 2);
-KeyInfo LY0(KeyType::Layer, 0, 0);
-KeyInfo LY1(KeyType::Layer, 0, 1);
-KeyInfo LY2(KeyType::Layer, 0, 2);
-KeyInfo LY3(KeyType::Layer, 0, 3);
-KeyInfo INS(0xD1);
-KeyInfo DEL(0xD4);
-KeyInfo HOM(0xD2);
-KeyInfo END(0xD5);
-KeyInfo PGU(0xD3);
-KeyInfo PGD(0xD6);
-KeyInfo RET(0xB0);
-KeyInfo _U_(0xDA);
-KeyInfo _D_(0xD9);
-KeyInfo _L_(0xD8);
-KeyInfo _R_(0xD7);
-KeyInfo NM0(0xEA);
-KeyInfo NM1(0xE1);
-KeyInfo NM2(0xE2);
-KeyInfo NM3(0xE3);
-KeyInfo NM4(0xE4);
-KeyInfo NM5(0xE5);
-KeyInfo NM6(0xE6);
-KeyInfo NM7(0xE7);
-KeyInfo NM8(0xE8);
-KeyInfo NM9(0xE9);
-KeyInfo NMD(0xEB);
-KeyInfo NMR(0xE0);
-KeyInfo __W('w');
-KeyInfo __A('a');
-KeyInfo __S('s');
-KeyInfo __D('d');
-KeyInfo __Q('q');
-KeyInfo __E('e');
-KeyInfo __F('f');
-KeyInfo __R('r');
-KeyInfo __1('1');
-KeyInfo __2('2');
-KeyInfo __3('3');
-KeyInfo __4(KeyType::Dual, '4', 3);
-KeyInfo TAB(0xB3);
-KeyInfo SPC(0x20);
-KeyInfo ___;
-
-Macro createMacro(int macro) {
+Macro createMacro(MacroType macro) {
 	switch (macro) {
-	case 0: {
+	case MacroType::HelloWorld: {
 		return Macro(std::vector<Stroke>{
 			{ Stroke('H', 0, 19) },
 			{ Stroke('e', 20, 40) },
@@ -105,49 +53,48 @@ Macro createMacro(int macro) {
 			{ Stroke('!', 240, 260) },
 		});
 	}
-	case 1: {
+	case MacroType::CRTL_ALT_DEL: {
 		return Macro(std::vector<Stroke>{
 			{ Stroke(KEY_LEFT_CTRL, 0, 100) },
 			{ Stroke(KEY_LEFT_ALT, 20, 100) },
 			{ Stroke(KEY_DELETE, 40, 100) },
 		});
 	}
-	case 2: {
+	case MacroType::Admin_CMD: {
 		return Macro(std::vector<Stroke>{
 			{ Stroke(0x87, 00, 10) },
-			{ Stroke('r',  05, 10) },
-			{ Stroke('h',  35, 40) },
-			{ Stroke('t',  40, 60) },
-			{ Stroke('t',  60, 80) },
-			{ Stroke('p',  80, 100) },
-			{ Stroke('s', 100, 120) },
-			{ Stroke(':', 120, 140) },
-			{ Stroke('/', 140, 160) },
-			{ Stroke('/', 160, 180) },
-			{ Stroke('t', 180, 200) },
-			{ Stroke('w', 200, 220) },
-			{ Stroke('e', 220, 240) },
-			{ Stroke('a', 240, 260) },
-			{ Stroke('k', 260, 280) },
-			{ Stroke('e', 280, 300) },
-			{ Stroke('r', 300, 320) },
-			{ Stroke('s', 320, 340) },
-			{ Stroke('.', 340, 360) },
-			{ Stroke('n', 360, 380) },
-			{ Stroke('e', 380, 400) },
-			{ Stroke('t', 400, 420) },
-			{ Stroke('/', 420, 440) },
-			{ Stroke(0xB0, 440, 470) },
+			{ Stroke('x',  05, 10) },
+			{ Stroke('a',  120, 130) },
+		});
+	}
+	case MacroType::WinMin: {
+		return Macro(std::vector<Stroke>{
+			{ Stroke(0x87, 00, 10) },
+			{ Stroke(KEY_DOWN_ARROW,  05, 10) },
+		});
+	}
+	case MacroType::WinMax: {
+		return Macro(std::vector<Stroke>{
+			{ Stroke(0x87, 00, 10) },
+			{ Stroke(KEY_UP_ARROW,  05, 10) },
+		});
+	}
+	case MacroType::WinLeft: {
+		return Macro(std::vector<Stroke>{
+			{ Stroke(0x87, 00, 10) },
+			{ Stroke(KEY_LEFT_ARROW,  05, 10) },
+		});
+	}
+	case MacroType::WinRight: {
+		return Macro(std::vector<Stroke>{
+			{ Stroke(0x87, 00, 10) },
+			{ Stroke(KEY_RIGHT_ARROW,  05, 10) },
 		});
 	}
 	default:
 		return Macro(std::vector<Stroke>{});
 	}
 }
-
-KeyInfo M_HelloWorld(KeyType::Macro, 0, -1, 0);
-KeyInfo M_CTRLALTDEL(KeyType::Macro, 0, -1, 1);
-KeyInfo M_TWEAKERS(KeyType::Macro, 0, -1, 2);
 
 /*
  * Switching keys: Hold NumLock, press 
@@ -158,16 +105,65 @@ KeyInfo M_TWEAKERS(KeyType::Macro, 0, -1, 2);
  */
 
 std::vector<std::vector<KeyInfo>> getLayer(uint8_t layerId) {
+	KeyInfo M_HelloWorld(KeyType::Macro, 0, -1, (int8_t)MacroType::HelloWorld);
+	KeyInfo M_CTRLALTDEL(KeyType::Macro, 0, -1, (int8_t)MacroType::CRTL_ALT_DEL);
+	KeyInfo M_CMD(KeyType::Macro, 0, -1, (int8_t)MacroType::Admin_CMD);
+	KeyInfo M_WINLEFT(KeyType::Macro, 0, -1, (int8_t)MacroType::WinLeft);
+	KeyInfo M_WINRIGHT(KeyType::Macro, 0, -1, (int8_t)MacroType::WinRight);
+	KeyInfo M_WINMAX(KeyType::Macro, 0, -1, (int8_t)MacroType::WinMax);
+	KeyInfo M_WINMIN(KeyType::Macro, 0, -1, (int8_t)MacroType::WinMin);
+
+	KeyInfo NUM(KeyType::KeyCode, 0xDB, -1);
+	KeyInfo DIV(KeyType::Dual, 0xDC, 0);
+	KeyInfo MUL(KeyType::Dual, 0xDD, 1);
+	KeyInfo MIN(KeyType::Dual, 0xDE, 2);
+	KeyInfo PLS(KeyType::Dual, 0xDF, 3);
+	KeyInfo PRT(KeyType::Dual, 0xCE, 0);
+	KeyInfo WIN(KeyType::Dual, 0x87, 1);
+	KeyInfo MEN(KeyType::Dual, 0xED, 2);
+	KeyInfo LY0(KeyType::Layer, 0, 0);
+	KeyInfo LY1(KeyType::Layer, 0, 1);
+	KeyInfo LY2(KeyType::Layer, 0, 2);
+	KeyInfo LY3(KeyType::Layer, 0, 3);
+	KeyInfo INS(0xD1);
+	KeyInfo DEL(0xD4);
+	KeyInfo HOM(0xD2);
+	KeyInfo END(0xD5);
+	KeyInfo PGU(0xD3);
+	KeyInfo PGD(0xD6);
+	KeyInfo RET(0xB0);
+	KeyInfo _U_(0xDA);
+	KeyInfo _D_(0xD9);
+	KeyInfo _L_(0xD8);
+	KeyInfo _R_(0xD7);
+	KeyInfo NM0(0xEA);
+	KeyInfo NM1(0xE1);
+	KeyInfo NM2(0xE2);
+	KeyInfo NM3(0xE3);
+	KeyInfo NM4(0xE4);
+	KeyInfo NM5(0xE5);
+	KeyInfo NM6(0xE6);
+	KeyInfo NM7(0xE7);
+	KeyInfo NM8(0xE8);
+	KeyInfo NM9(0xE9);
+	KeyInfo NMD(0xEB);
+	KeyInfo NMR(0xE0);
+	KeyInfo __W('w');
+	KeyInfo __A('a');
+	KeyInfo __S('s');
+	KeyInfo __D('d');
+	KeyInfo __Q('q');
+	KeyInfo __E('e');
+	KeyInfo __F('f');
+	KeyInfo __R('r');
+	KeyInfo __1('1');
+	KeyInfo __2('2');
+	KeyInfo __3('3');
+	KeyInfo __4(KeyType::Dual, '4', 3);
+	KeyInfo TAB(0xB3);
+	KeyInfo SPC(0x20);
+	KeyInfo ___;
 	switch(layerId) {
-	case 0: {
-		return {
-			{ NUM, DIV, MUL, MIN },
-			{ NM7, NM8, NM9, ___ },
-			{ NM4, NM5, NM6, PLS },
-			{ NM1, NM2, NM3, ___ },
-			{ NM0, NM0, NMD, NMR }
-		};
-	}
 	case 1: {
 		return {
 			{ NUM, PRT, WIN, MEN },
@@ -190,13 +186,21 @@ std::vector<std::vector<KeyInfo>> getLayer(uint8_t layerId) {
 		return {
 			{ NUM, LY0, LY1, LY2 },
 			{ ___, ___, ___, ___ },
-			{ ___, M_HelloWorld, M_CTRLALTDEL, LY3 },
-			{ ___, M_TWEAKERS, ___, ___ },
-			{ ___, ___, ___, RET }
+			{ M_CMD, M_HelloWorld, M_CTRLALTDEL, LY3 },
+			{ ___, M_WINMAX, ___, ___ },
+			{ M_WINLEFT, M_WINMIN, M_WINRIGHT, RET }
 		};
 	}
 	default:
-		return std::vector<std::vector<KeyInfo>>{};
+	case 0: {
+		return {
+			{ NUM, DIV, MUL, MIN },
+			{ NM7, NM8, NM9, ___ },
+			{ NM4, NM5, NM6, PLS },
+			{ NM1, NM2, NM3, ___ },
+			{ NM0, NM0, NMD, NMR }
+		};
+	}
 	}
 }
 
@@ -226,7 +230,7 @@ bool debounce(unsigned long t_now, unsigned long t_prev) {
 	return false;
 }
 
-void playMacro(int nextMacro) {
+void playMacro(MacroType nextMacro) {
 	Macro macro = createMacro(nextMacro);
 	if (macro.Strokes.size() == 0) {
 		return;
@@ -279,8 +283,8 @@ void loop() {
 		if (digitalRead(input_pins[cnt]) == HIGH) { 
 			// key up
 			if (key_state[strobe_row][cnt] != 0) {
-				if (num_down && keyInfo.GetType() == KeyType::Dual ||
-					num_down && keyInfo.GetType() == KeyType::Layer) {
+				if ((num_down && keyInfo.GetType() == KeyType::Dual) ||
+					(num_down && keyInfo.GetType() == KeyType::Layer)) {
 					break;
 				}
 
@@ -300,8 +304,8 @@ void loop() {
 		else {
 			// key down
 			if (key_state[strobe_row][cnt] == 0) {
-				if (num_down && keyInfo.GetType() == KeyType::Dual ||
-					num_down && keyInfo.GetType() == KeyType::Layer) {
+				if ((num_down && keyInfo.GetType() == KeyType::Dual) ||
+					(num_down && keyInfo.GetType() == KeyType::Layer)) {
 					nextMap = keyInfo.GetSwitch();
 					switchedLayer = true;
 					break;
@@ -344,6 +348,6 @@ void loop() {
 	strobe_row++;
 
 	if (nextMacro >= 0) {
-		playMacro(nextMacro);
+		playMacro((MacroType)nextMacro);
 	}
 }

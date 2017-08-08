@@ -2,6 +2,16 @@
 #include <StandardCplusplus.h>
 #include <vector>
 
+enum class MacroType {
+	HelloWorld,
+	CRTL_ALT_DEL,
+	Admin_CMD,
+	WinMin,
+	WinMax,
+	WinLeft,
+	WinRight,
+};
+
 struct Stroke {
 	Stroke(uint8_t key, unsigned long keyDown, unsigned long keyUp): 
 		   Key(key), KeyDown(keyDown), KeyUp(keyUp) {}

@@ -22,3 +22,10 @@ Adapted for [this layout (KLE)](http://www.keyboard-layout-editor.com/#/gists/6e
   * MUL: Navigation keys
   * MIN: WASD keys ("Game")
   * PLS: TBD (Macros?)
+
+## Building
+
+This project uses this fork of [StandardCplusplus](https://github.com/SGSSGene/StandardCplusplus). Follow the instructions there to install the library.
+
+Build this project with the Arduino IDE. Last tested version is 1.8.3. Currently has a few issues with building for Visual Micro.
+
