@@ -128,6 +128,8 @@ std::vector<std::vector<KeyInfo>> getLayer(uint8_t layerId) {
 	KeyInfo LY2(KeyType::Layer, 0, 2);
 	KeyInfo LY3(KeyType::Layer, 0, 3);
 	KeyInfo ESC(KEY_ESC);
+	KeyInfo CAP(KEY_CAPS_LOCK);
+	KeyInfo BAK(KEY_BACKSPACE);
 	KeyInfo INS(0xD1);
 	KeyInfo DEL(0xD4);
 	KeyInfo HOM(0xD2);
@@ -165,14 +167,14 @@ std::vector<std::vector<KeyInfo>> getLayer(uint8_t layerId) {
 	KeyInfo __4(KeyType::Dual, '4', 3);
 	KeyInfo TAB(0xB3);
 	KeyInfo SPC(0x20);
-	KeyInfo ___;
+	KeyInfo ___; // blank/disabled key
 	switch(layerId) {
 	case 1: {
 		return {
-			{ NUM, PRT, WIN, MEN },
+			{ NUM, CAP, WIN, PRT },
 			{ INS, HOM, PGU, ___ },
-			{ DEL, END, PGD, LY3 },
-			{ ___, _U_, ___, ___ },
+			{ DEL, END, PGD, MEN },
+			{ ESC, _U_, BAK, ___ },
 			{ _L_, _D_, _R_, RET }
 		};
 	}
