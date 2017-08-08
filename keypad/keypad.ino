@@ -105,6 +105,7 @@ Macro createMacro(MacroType macro) {
  */
 
 std::vector<std::vector<KeyInfo>> getLayer(uint8_t layerId) {
+	// Macros
 	KeyInfo M_HelloWorld(KeyType::Macro, 0, -1, (int8_t)MacroType::HelloWorld);
 	KeyInfo M_CTRLALTDEL(KeyType::Macro, 0, -1, (int8_t)MacroType::CRTL_ALT_DEL);
 	KeyInfo M_CMD(KeyType::Macro, 0, -1, (int8_t)MacroType::Admin_CMD);
@@ -113,6 +114,7 @@ std::vector<std::vector<KeyInfo>> getLayer(uint8_t layerId) {
 	KeyInfo M_WINMAX(KeyType::Macro, 0, -1, (int8_t)MacroType::WinMax);
 	KeyInfo M_WINMIN(KeyType::Macro, 0, -1, (int8_t)MacroType::WinMin);
 
+	// Keys that are used
 	KeyInfo NUM(KeyType::KeyCode, 0xDB, -1);
 	KeyInfo DIV(KeyType::Dual, 0xDC, 0);
 	KeyInfo MUL(KeyType::Dual, 0xDD, 1);
@@ -125,6 +127,7 @@ std::vector<std::vector<KeyInfo>> getLayer(uint8_t layerId) {
 	KeyInfo LY1(KeyType::Layer, 0, 1);
 	KeyInfo LY2(KeyType::Layer, 0, 2);
 	KeyInfo LY3(KeyType::Layer, 0, 3);
+	KeyInfo ESC(KEY_ESC);
 	KeyInfo INS(0xD1);
 	KeyInfo DEL(0xD4);
 	KeyInfo HOM(0xD2);
@@ -187,7 +190,7 @@ std::vector<std::vector<KeyInfo>> getLayer(uint8_t layerId) {
 			{ NUM, LY0, LY1, LY2 },
 			{ ___, ___, ___, ___ },
 			{ M_CMD, M_HelloWorld, M_CTRLALTDEL, LY3 },
-			{ ___, M_WINMAX, ___, ___ },
+			{ ESC, M_WINMAX, ___, ___ },
 			{ M_WINLEFT, M_WINMIN, M_WINRIGHT, RET }
 		};
 	}

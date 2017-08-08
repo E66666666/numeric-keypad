@@ -10,8 +10,8 @@ Adapted for [this layout (KLE)](http://www.keyboard-layout-editor.com/#/gists/6e
 ## Features
 
 * Multiple layers by holding num lock + div/mult/min/plus
-* (WIP) Macro layer
-* (WIP) Something to notify the user which layer/num lock we're on
+* Macro keys
+* (???) Something to notify the user which layer/num lock we're on
 
 ## Usage
 
@@ -27,5 +27,4 @@ Adapted for [this layout (KLE)](http://www.keyboard-layout-editor.com/#/gists/6e
 
 This project uses this fork of [StandardCplusplus](https://github.com/SGSSGene/StandardCplusplus). Follow the instructions there to install the library.
 
-Build this project with the Arduino IDE. Last tested version is 1.8.3. Currently has a few issues with building for Visual Micro.
-
+Build this project with the Arduino IDE, or Visual Micro. Last tested version is Arduino IDE 1.8.3 and Visual Micro 1707.30.3.
