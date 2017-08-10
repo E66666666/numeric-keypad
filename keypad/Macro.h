@@ -10,15 +10,16 @@ enum class MacroType {
 	WinMax,
 	WinLeft,
 	WinRight,
+	FiveMTest,
 };
 
 struct Stroke {
-	Stroke(uint8_t key, unsigned long keyDown, unsigned long keyUp): 
-		   Key(key), KeyDown(keyDown), KeyUp(keyUp) {}
+	Stroke(uint8_t key, unsigned long keyDown, unsigned long duration): 
+		   Key(key), KeyDown(keyDown), Duration(duration) {}
 
 	uint8_t Key;
 	unsigned long KeyDown;
-	unsigned long KeyUp;
+	unsigned long Duration;
 	bool Active = false;
 };
 

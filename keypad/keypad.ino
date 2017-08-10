@@ -31,64 +31,84 @@ bool num_down_prev = num_down;
 bool switchedLayer = false;
 
 /*
- * Define all keys we're gonna be using
+ * Adding a macro:
+ * Add a macro here and add a MacroType enum member in Macro.h,
+ * then create a KeyInfo with that MacroType.
  */
 
 Macro createMacro(MacroType macro) {
 	switch (macro) {
 	case MacroType::HelloWorld: {
 		return Macro(std::vector<Stroke>{
-			{ Stroke('H', 0, 19) },
-			{ Stroke('e', 20, 40) },
-			{ Stroke('l', 40, 60) },
-			{ Stroke('l', 60, 80) },
-			{ Stroke('o', 80, 100) },
-			{ Stroke(',', 100, 110) },
-			{ Stroke(' ', 110, 120) },
-			{ Stroke('W', 120, 139) },
-			{ Stroke('o', 140, 160) },
-			{ Stroke('r', 160, 180) },
-			{ Stroke('l', 200, 220) },
-			{ Stroke('d', 220, 240) },
-			{ Stroke('!', 240, 260) },
+			{ Stroke('H', 0, 10) },
+			{ Stroke('e', 20, 10) },
+			{ Stroke('l', 40, 10) },
+			{ Stroke('l', 60, 10) },
+			{ Stroke('o', 80, 10) },
+			{ Stroke(',', 100, 10) },
+			{ Stroke(' ', 110, 10) },
+			{ Stroke('W', 120, 10) },
+			{ Stroke('o', 150, 10) },
+			{ Stroke('r', 160, 10) },
+			{ Stroke('l', 200, 10) },
+			{ Stroke('d', 220, 10) },
+			{ Stroke('!', 240, 10) },
 		});
 	}
 	case MacroType::CRTL_ALT_DEL: {
 		return Macro(std::vector<Stroke>{
 			{ Stroke(KEY_LEFT_CTRL, 0, 100) },
-			{ Stroke(KEY_LEFT_ALT, 20, 100) },
-			{ Stroke(KEY_DELETE, 40, 100) },
+			{ Stroke(KEY_LEFT_ALT, 20, 80) },
+			{ Stroke(KEY_DELETE, 40, 60) },
 		});
 	}
 	case MacroType::Admin_CMD: {
 		return Macro(std::vector<Stroke>{
-			{ Stroke(0x87, 00, 10) },
-			{ Stroke('x',  05, 10) },
-			{ Stroke('a',  120, 130) },
+			{ Stroke(0x87, 00, 50) },
+			{ Stroke('x',  20, 20) },
+			{ Stroke('a',  200, 20) },
 		});
 	}
 	case MacroType::WinMin: {
 		return Macro(std::vector<Stroke>{
-			{ Stroke(0x87, 00, 10) },
+			{ Stroke(0x87, 00, 20) },
 			{ Stroke(KEY_DOWN_ARROW,  05, 10) },
 		});
 	}
 	case MacroType::WinMax: {
 		return Macro(std::vector<Stroke>{
-			{ Stroke(0x87, 00, 10) },
+			{ Stroke(0x87, 00, 20) },
 			{ Stroke(KEY_UP_ARROW,  05, 10) },
 		});
 	}
 	case MacroType::WinLeft: {
 		return Macro(std::vector<Stroke>{
-			{ Stroke(0x87, 00, 10) },
+			{ Stroke(0x87, 00, 20) },
 			{ Stroke(KEY_LEFT_ARROW,  05, 10) },
 		});
 	}
 	case MacroType::WinRight: {
 		return Macro(std::vector<Stroke>{
-			{ Stroke(0x87, 00, 10) },
+			{ Stroke(0x87, 00, 20) },
 			{ Stroke(KEY_RIGHT_ARROW,  05, 10) },
+		});
+	}
+	case MacroType::FiveMTest: {
+		return Macro(std::vector<Stroke> {
+			{ Stroke('r', 00, 10) },
+			{ Stroke('e', 10, 10) },
+			{ Stroke('s', 20, 10) },
+			{ Stroke('t', 30, 10) },
+			{ Stroke('a', 40, 10) },
+			{ Stroke('r', 50, 10) },
+			{ Stroke('t', 60, 10) },
+			{ Stroke(' ', 70, 10) },
+			{ Stroke('t', 80, 10) },
+			{ Stroke('h', 90, 10) },
+			{ Stroke('i', 100, 10) },
+			{ Stroke('n', 110, 10) },
+			{ Stroke('g', 120, 10) },
+			{ Stroke(KEY_RETURN, 130, 10) },
 		});
 	}
 	default:
@@ -113,6 +133,7 @@ std::vector<std::vector<KeyInfo>> getLayer(uint8_t layerId) {
 	KeyInfo M_WINRIGHT(KeyType::Macro, 0, -1, (int8_t)MacroType::WinRight);
 	KeyInfo M_WINMAX(KeyType::Macro, 0, -1, (int8_t)MacroType::WinMax);
 	KeyInfo M_WINMIN(KeyType::Macro, 0, -1, (int8_t)MacroType::WinMin);
+	KeyInfo M_FIVEMTEST(KeyType::Macro, 0, -1, (int8_t)MacroType::FiveMTest);
 
 	// Keys that are used
 	KeyInfo NUM(KeyType::KeyCode, 0xDB, -1);
@@ -190,7 +211,7 @@ std::vector<std::vector<KeyInfo>> getLayer(uint8_t layerId) {
 	case 3: {
 		return {
 			{ NUM, LY0, LY1, LY2 },
-			{ ___, ___, ___, ___ },
+			{ M_FIVEMTEST, ___, ___, ___ },
 			{ M_CMD, M_HelloWorld, M_CTRLALTDEL, LY3 },
 			{ ESC, M_WINMAX, ___, ___ },
 			{ M_WINLEFT, M_WINMIN, M_WINRIGHT, RET }
@@ -229,7 +250,6 @@ void setup() {
 
 
 bool debounce(unsigned long t_now, unsigned long t_prev) {
-	// need to check for underflow?
 	if ((t_now - t_prev) <= DEBOUNCE_MS) 
 		return true;
 	return false;
@@ -241,7 +261,7 @@ void playMacro(MacroType nextMacro) {
 		return;
 	}
 	unsigned long t_start = millis();
-	unsigned long t_total = macro.Strokes.back().KeyUp - macro.Strokes.front().KeyDown;
+	unsigned long t_total = macro.Strokes.back().Duration + macro.Strokes.back().KeyDown;
 	unsigned extraDelay = 10;
 
 	while (true) {
@@ -253,7 +273,7 @@ void playMacro(MacroType nextMacro) {
 				Keyboard.press(stroke.Key);
 				stroke.Active = true;
 			}
-			if (millis() > t_start + stroke.KeyUp && stroke.Active) {
+			if (millis() > t_start + stroke.KeyDown + stroke.Duration && stroke.Active) {
 				Keyboard.release(stroke.Key);
 			}
 		}
